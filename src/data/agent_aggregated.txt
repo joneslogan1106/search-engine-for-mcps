@@ -1,0 +1,1188 @@
+
+=== ./../mcps/agent/tsconfig.json ===
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "baseUrl": ".",
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@test/*": ["./test/*"]
+    },
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "types": ["vitest/globals", "node"]
+  },
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["node_modules", "build"]
+}
+
+
+=== ./../mcps/agent/package.json ===
+{
+  "name": "@1mcp/agent",
+  "version": "0.12.0",
+  "description": "One MCP server to aggregate them all - A unified Model Context Protocol server implementation",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "mcp-client",
+    "model-context-protocol",
+    "agent",
+    "proxy",
+    "server",
+    "cli",
+    "ai",
+    "llm",
+    "model-aggregation",
+    "typescript"
+  ],
+  "author": "William Xu <xuzp@1mcp.app>",
+  "homepage": "https://github.com/1mcp-app/agent",
+  "bugs": {
+    "url": "https://github.com/1mcp-app/agent/issues"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/1mcp-app/agent.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "bin": {
+    "1mcp": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "bash -c 'tsc --noEmit --project tsconfig.test.json'"
+    ],
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{md,json,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "scripts": {
+    "dev": "LOG_LEVEL=debug tsc-watch --project tsconfig.build.json --onSuccess \"node build/index.js --config ./mcp.json --port 3051 --enable-auth\"",
+    "build": "tsc --project tsconfig.build.json && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "prepare": "husky || true",
+    "watch": "tsc --watch --project tsconfig.build.json",
+    "inspector": "npx -y @modelcontextprotocol/inspector",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.{js,ts}\" \"test/**/*.{js,ts}\"",
+    "typecheck": "tsc --noEmit --project tsconfig.test.json",
+    "test": "pnpm test:unit && pnpm test:e2e",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test:unit:coverage": "vitest run --coverage",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "test:e2e:watch": "vitest --config vitest.e2e.config.ts",
+    "test:e2e:coverage": "vitest run --config vitest.e2e.config.ts --coverage"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.0",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1",
+    "source-map-support": "^0.5.21",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0",
+    "winston-transport": "^4.9.0",
+    "yargs": "^17.7.2",
+    "yargs-parser": "^22.0.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@types/body-parser": "^1.19.5",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.0",
+    "@types/node": "^24.0.0",
+    "@types/uuid": "^10.0.0",
+    "@types/yargs": "^17.0.33",
+    "@typescript-eslint/eslint-plugin": "^8.27.0",
+    "@typescript-eslint/parser": "^8.27.0",
+    "@vitest/coverage-v8": "^1.4.0",
+    "axios": "^1.10.0",
+    "eslint": "^9.22.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.3",
+    "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "jiti": "^2.4.2",
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.5.3",
+    "ts-node": "^10.9.2",
+    "tsc-watch": "^7.1.1",
+    "typescript": "^5.3.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^1.4.0"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "esbuild"
+    ]
+  }
+}
+
+
+=== ./../mcps/agent/tsconfig.test.json ===
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "."
+  }
+}
+
+
+=== ./../mcps/agent/CHANGELOG.md ===
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.12.0] - 2025-07-08
+
+### 🚀 Features
+- Add error handling for missing streamable HTTP sessions by @xizhibei
+- Implement ping handler for client health checks by @xizhibei
+- Add Vitest support and type checking script by @xizhibei
+- Refactor project structure and enhance authentication management by @xizhibei
+- Add .cursorindexingignore and update .gitignore for improved file management by @xizhibei
+- Update server info management and enhance initialization by @xizhibei
+- Add unit tests for capability management and conflict resolution by @xizhibei
+- Implement debounced configuration reload on file changes by @xizhibei
+- Add comprehensive tests for cursor parsing and encoding utilities by @xizhibei
+- Enhance connection handling and logging by @xizhibei
+- Enhance URI parsing with robust validation and error handling by @xizhibei
+- Enhance session and auth code validation with improved error handling by @xizhibei
+- Add glama.json configuration file for maintainers by @xizhibei
+
+### 🚜 Refactor
+- Preserve original notification structure while modifying parameters by @xizhibei
+
+### 🧪 Testing
+- Add vitest framework for client filtering tests by @xizhibei
+
+
+## [0.11.0] - 2025-06-26
+
+### 🚀 Features
+- Add source-map-support for improved error stack traces by @xizhibei
+- Add rate limiting for OAuth endpoints and update package dependencies by @xizhibei
+- Enhance session management by adding path traversal validation for session IDs and auth codes by @xizhibei
+- Add helper function to dynamically build OAuth issuer URL for improved environment support by @xizhibei
+- Enhance OAuth 2.1 implementation with session ID prefixes, improved token validation, and comprehensive documentation by @xizhibei
+- Implement OAuth 2.1 authentication with session management and middleware integration by @xizhibei
+- Enhance error handling for notifications in client-server communication by @xizhibei
+- Add CORS support and implement OAuth 2.1 endpoints for authorization and token management by @xizhibei
+- Include outputSchema and annotations in tool registration for enhanced tool metadata by @xizhibei
+- Implement completion request handlers and enhance capability checks in client operations by @xizhibei
+- Add ElicitRequest and PingRequest handlers to improve client-server interaction by @xizhibei
+
+### 🐛 Bug Fixes
+- For code scanning alert no. 4: Uncontrolled data used in path expression by @xizhibei in [#62](https://github.com/1mcp-app/agent/pull/62)
+
+### 🚜 Refactor
+- Update access token generation to use UUIDs and improve session management by @xizhibei
+
+### 📚 Documentation
+- Update README to include new options for pagination, authentication, and session management by @xizhibei
+- Add section on debugging and source maps to README by @xizhibei
+
+### ⚙️ Miscellaneous Tasks
+- Remove deprecated Docker build workflow and integrate into main workflow by @xizhibei
+
+
+## [0.10.3] - 2025-06-11
+
+### 🚜 Refactor
+- Replace getInstance with getOrCreateInstance in tests for singleton behavior by @xizhibei
+
+
+## [0.10.2] - 2025-06-11
+
+### 🐛 Bug Fixes
+- Mcp client disconnect after reload by @xizhibei
+- Restore status property in ClientInfo and update client disconnection handling by @xizhibei
+
+
+## [0.10.1] - 2025-06-10
+
+### 🐛 Bug Fixes
+- Infer transport type if missing and update validation logic by @xizhibei
+
+
+## [0.10.0] - 2025-06-10
+
+### 🚀 Features
+- Add support for 'streamableHttp' transport type and refactor transport creation logic by @xizhibei
+- Add pagination support to transport connection and related handlers by @xizhibei
+
+### 🐛 Bug Fixes
+- Prevent duplicate listeners and increase max listeners for transport config changes by @xizhibei
+
+### 🚜 Refactor
+- Streamline resource and template listing with pagination support by @xizhibei
+- Replace ERROR_CODES with ErrorCode in various files for improved error handling consistency by @xizhibei
+
+
+## [0.9.0] - 2025-05-06
+
+### 💼 Other
+- Streamable http transport by @xizhibei in [#34](https://github.com/1mcp-app/agent/pull/34)
+
+### ⚙️ Miscellaneous Tasks
+- Update Docker build workflow conditions to include branch checks by @xizhibei
+
+
+## [0.8.2] - 2025-05-03
+
+### 🐛 Bug Fixes
+- Update RequestHandlerExtra type to support generic parameters by @xizhibei
+
+
+## [0.8.1] - 2025-05-03
+
+### ⚙️ Miscellaneous Tasks
+- Remove branch restriction from Docker build workflow for improved flexibility by @xizhibei
+
+
+## [0.8.0] - 2025-04-14
+
+### 🚀 Features
+- Add Smithery.ai configuration file with command and schema definitions by @xizhibei
+- Enable environment variable parsing with ONE_MCP prefix by @xizhibei
+- Integrate client capabilities into createClient function and define server/client capabilities in constants by @xizhibei
+
+### 🐛 Bug Fixes
+- Enhance logging capabilities with console transport and MCP transport integration by @xizhibei
+
+### 💼 Other
+- Vitest by @xizhibei in [#19](https://github.com/1mcp-app/agent/pull/19)
+- Merge pull request #14 from 1mcp-app/dependabot/npm_and_yarn/typescript-5.8.3 by @xizhibei in [#14](https://github.com/1mcp-app/agent/pull/14)
+- Merge pull request #15 from 1mcp-app/dependabot/npm_and_yarn/express-5.1.0 by @xizhibei in [#15](https://github.com/1mcp-app/agent/pull/15)
+- Merge pull request #16 from 1mcp-app/dependabot/npm_and_yarn/eslint-plugin-prettier-5.2.6 by @xizhibei in [#16](https://github.com/1mcp-app/agent/pull/16)
+- Merge pull request #17 from 1mcp-app/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.9.0 by @xizhibei in [#17](https://github.com/1mcp-app/agent/pull/17)
+- Merge pull request #18 from 1mcp-app/dependabot/npm_and_yarn/eslint/js-9.24.0 by @xizhibei in [#18](https://github.com/1mcp-app/agent/pull/18)
+- Merge pull request #12 from 1mcp-app/dependabot/npm_and_yarn/types/node-22.13.14 by @xizhibei in [#12](https://github.com/1mcp-app/agent/pull/12)
+- Merge pull request #13 from 1mcp-app/dependabot/npm_and_yarn/typescript-eslint/parser-8.29.0 by @xizhibei in [#13](https://github.com/1mcp-app/agent/pull/13)
+- Merge pull request #11 from 1mcp-app/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.8.0 by @xizhibei in [#11](https://github.com/1mcp-app/agent/pull/11)
+- Merge pull request #10 from 1mcp-app/dependabot/npm_and_yarn/ts-jest-29.3.1 by @xizhibei in [#10](https://github.com/1mcp-app/agent/pull/10)
+- Merge pull request #9 from 1mcp-app/dependabot/npm_and_yarn/typescript-eslint/eslint-plugin-8.29.0 by @xizhibei in [#9](https://github.com/1mcp-app/agent/pull/9)
+
+### 🚜 Refactor
+- Enhance MCP transport integration and logging setup by @xizhibei
+
+### 📚 Documentation
+- Add badges, Docker instructions, and environment variable configuration examples by @xizhibei
+
+### ⚙️ Miscellaneous Tasks
+- Update Docker build workflow to trigger on successful completion of the "Publish Package" workflow and enhance image metadata by @xizhibei
+- Add GitHub Actions workflow for building and pushing Docker images by @xizhibei
+- Add Dockerfile and .dockerignore for containerization by @xizhibei
+- Consolidate release process by removing old release.yml and integrating steps into main.yml by @xizhibei
+
+## New Contributors
+* @github-actions[bot] made their first contribution
+
+## [0.7.0] - 2025-03-27
+
+### ⚙️ Miscellaneous Tasks
+- Create temporary branch for changelog and version updates before pushing to main by @xizhibei
+
+
+## [0.6.0] - 2025-03-26
+
+### ⚙️ Miscellaneous Tasks
+- Update release workflows to trigger on version tags and successful completion of publish job by @xizhibei
+
+
+## [0.5.0] - 2025-03-26
+
+### 🚀 Features
+- Dynamically set MCP_SERVER_VERSION from package.json, improving version management and consistency by @xizhibei
+- Enhance logging setup by adding SSEServerTransport support and configuring console transport for visibility, improving logging flexibility based on server type by @xizhibei
+- Add comprehensive tests for clientManager and introduce utility functions for client filtering, enhancing test coverage and maintainability by @xizhibei
+- Refactor operation execution with retry logic and introduce comprehensive tests for client operations, enhancing error handling and reliability by @xizhibei
+- Enhance client capability management by adding filtering functions and updating request handlers to utilize capabilities, improving client interaction and resource management by @xizhibei
+
+### 💼 Other
+- Merge pull request #3 from 1mcp-app/dependabot/npm_and_yarn/eslint/js-9.23.0 by @xizhibei in [#3](https://github.com/1mcp-app/agent/pull/3)
+- Merge pull request #4 from 1mcp-app/dependabot/npm_and_yarn/ts-jest-29.3.0 by @xizhibei in [#4](https://github.com/1mcp-app/agent/pull/4)
+- Merge pull request #5 from 1mcp-app/dependabot/npm_and_yarn/types/express-5.0.1 by @xizhibei in [#5](https://github.com/1mcp-app/agent/pull/5)
+- Merge pull request #6 from 1mcp-app/dependabot/npm_and_yarn/eslint-9.23.0 by @xizhibei in [#6](https://github.com/1mcp-app/agent/pull/6)
+- Merge pull request #7 from 1mcp-app/dependabot/npm_and_yarn/eslint-plugin-prettier-5.2.4 by @xizhibei in [#7](https://github.com/1mcp-app/agent/pull/7)
+
+### 🚜 Refactor
+- Remove log directory creation logic from logger setup, simplifying initialization process by @xizhibei
+
+### ⚙️ Miscellaneous Tasks
+- Automate version updates for MCP_SERVER_VERSION and package.json in changelog process by @xizhibei
+- Add git-cliff configuration and automate changelog generation in workflows by @xizhibei
+- Update inspector command in package.json for simplified usage and adjust README instructions accordingly by @xizhibei
+- Automate version updates in package.json by @xizhibei
+- Add author and bugs section to package.json for improved metadata and issue tracking by @xizhibei
+- Add keywords for better discoverability and update homepage URL to GitHub repository by @xizhibei
+
+
+## [0.4.0] - 2025-03-23
+
+### ⚙️ Miscellaneous Tasks
+- Update package and server version to 0.4.0 for consistency across project by @xizhibei
+
+
+## [0.3.0] - 2025-03-23
+
+### 🚀 Features
+- Add HOST configuration for ExpressServer, allowing customizable host settings for SSE transport by @xizhibei
+- Implement comprehensive Jest tests for ServerManager, covering transport connection, disconnection, and management methods to ensure robust functionality and error handling by @xizhibei
+- Add Jest configuration and initial tests for ConfigManager, enhancing test coverage and ensuring proper functionality of configuration management by @xizhibei
+- Add bug report issue template to streamline bug reporting process and improve user feedback collection by @xizhibei
+- Add lint step by @xizhibei
+- Add ESLint configuration and integrate TypeScript support, enhancing code quality and consistency across the project by @xizhibei
+- Add support for client filtering by tags in transport connections, enhancing server-client interaction and flexibility by @xizhibei
+
+### 🚜 Refactor
+- Remove redundant file transport configurations from logger setup, simplifying logging structure and improving maintainability by @xizhibei
+- Streamline transport handling in ServerManager and related components, enhancing type safety and maintainability by replacing ClientTransports with a more generic EnhancedTransport interface by @xizhibei
+- Update configManager export and improve import structure in configReloadService for better clarity and maintainability by @xizhibei
+- Consolidate transport-related types and schemas into a single file, improving organization and type safety across the application by @xizhibei
+- Enhance client management with improved error handling and structured types, ensuring better resilience and maintainability in client operations by @xizhibei
+- Update client management to use structured types for clients and transports, enhancing type safety and maintainability across the application by @xizhibei
+
+### 📚 Documentation
+- Update transport options and add tags section for server filtering, enhancing configuration clarity and usage examples by @xizhibei
+
+
+## [0.2.0] - 2025-03-19
+
+### 🚀 Features
+- Extend transport configuration to support 'http' type, enhancing transport options for improved flexibility by @xizhibei
+- Implement global configuration management with dynamic path resolution and default config creation by @xizhibei
+- Add Zod schema for transport configuration validation, improving error handling and flexibility in transport creation by @xizhibei
+- Refactor client creation to utilize constants for server name and version, enhancing maintainability and consistency across the application by @xizhibei
+- Refactor server initialization by introducing ExpressServer class for improved structure and maintainability by @xizhibei
+- Enhance ConfigManager to accept custom config file path and update server setup to utilize it by @xizhibei
+- Add MCP server capabilities constant and refactor server setup to utilize it by @xizhibei
+- Add request/response logging middleware and enhance server with logging capabilities by @xizhibei
+- Refactor server setup and introduce ServerManager for improved transport handling and logging by @xizhibei
+- Enhance connection handling and logging in MCPTransport class by @xizhibei
+- Enhance configuration reload logic with improved transport handling by @xizhibei
+
+### 🚜 Refactor
+- Enhance logging middleware with Zod schemas for request and notification validation, improving type safety and error handling by @xizhibei
+- Update transport configuration types from MCPTransport to MCPServerParams, enhancing flexibility for transport creation and error handling by @xizhibei
+- Restructure logger imports to use dedicated logger directory and enhance logging capabilities across the application by @xizhibei
+- Remove defaultMeta from logger and update loggerName in MCP transport to '1mcp' by @xizhibei
+
+### 📚 Documentation
+- Update quick start guide and configuration details, enhancing clarity on server setup and usage instructions by @xizhibei
+
+### ⚙️ Miscellaneous Tasks
+- Bump version to 0.2.0 and update README for enhanced transport options and configuration management by @xizhibei
+
+
+## [0.1.0] - 2025-03-16
+
+### 🚀 Features
+- Create dependabot.yml by @xizhibei
+- Integrate husky and lint-staged for improved pre-commit checks. by @xizhibei
+- Add .node-version file and GitHub Actions workflow for package publishing. Introduced a version file for Node.js setup and created a CI workflow to automate package publishing to npm and GitHub Package Registry upon release events. Updated package.json to include repository information and publish configuration. by @xizhibei
+- Add yargs and related types for command line argument parsing. Updated package.json and pnpm-lock.yaml to include yargs and its type definitions, enhancing the server's command line interface capabilities. Updated README with usage instructions for new transport options. by @xizhibei
+- Rename project to 1MCP and update description for clarity. Changed package name and bin entry to reflect the new branding, and enhanced the project description to emphasize its unified MCP server capabilities. by @xizhibei
+- Enhance logger configuration with custom formatting and improved file transport paths. Updated logger to use a custom format for console and file outputs, ensuring better log readability and structured output. Prevent logger from exiting on error to maintain stability. by @xizhibei
+- Implement dynamic configuration reload service and configuration manager. Added graceful shutdown handling, integrated configuration watching, and improved transport management during configuration changes. by @xizhibei
+- Introduce custom error types and centralized error handling utilities. Added new error codes to constants, implemented error handling in client operations and notification handlers, and enhanced request handlers with partial failure notifications. by @xizhibei
+- Refactor server initialization and transport handling. Introduced modular client and transport management, added capability registration, and improved notification handling. Enhanced connection retry logic with configurable settings. by @xizhibei
+- Integrate MCP transport for enhanced logging and connection status management. Added winston-transport dependency, updated logger to handle MCP connections, and implemented log level adjustments based on client connections. by @xizhibei
+- Add application constants for server configuration and error handling by @xizhibei
+
+### 🐛 Bug Fixes
+- Ensure callback is invoked when not connected to maintain log integrity. This change prevents potential log loss by calling the callback function when the transport is not connected. by @xizhibei
+
+### 💼 Other
+- Merge pull request #1 from 1mcp-app/dependabot/npm_and_yarn/modelcontextprotocol/sdk-1.7.0 by @xizhibei in [#1](https://github.com/1mcp-app/agent/pull/1)
+- Merge pull request #2 from 1mcp-app/dependabot/npm_and_yarn/types/node-22.13.10 by @xizhibei in [#2](https://github.com/1mcp-app/agent/pull/2)
+- Enhance transport handling and connection logic. Introduced dynamic transport loading from mcp.json, improved retry logic with exponential backoff for client connections, and updated logging to include JSON stringification of notifications. by @xizhibei
+
+### 🚜 Refactor
+- Improve client connection logic with enhanced error handling and exponential backoff. Updated logging for connection attempts and added error handling for client creation failures. by @xizhibei
+
+### 📚 Documentation
+- Update project overview and features, enhance server configuration details, and switch to pnpm for dependency management by @xizhibei
+
+### 🎨 Styling
+- Update tab width from 4 to 2 spaces for consistency across the codebase. by @xizhibei
+
+### ⚙️ Miscellaneous Tasks
+- Add .editorconfig for consistent coding styles and update .gitignore to include additional files and directories by @xizhibei
+
+## New Contributors
+* @xizhibei made their first contribution in [#1](https://github.com/1mcp-app/agent/pull/1)
+* @dependabot[bot] made their first contribution
+
+[0.12.0]: https://github.com/1mcp-app/agent/compare/v0.11.0..v0.12.0
+[0.11.0]: https://github.com/1mcp-app/agent/compare/v0.10.3..v0.11.0
+[0.10.3]: https://github.com/1mcp-app/agent/compare/v0.10.2..v0.10.3
+[0.10.2]: https://github.com/1mcp-app/agent/compare/v0.10.1..v0.10.2
+[0.10.1]: https://github.com/1mcp-app/agent/compare/v0.10.0..v0.10.1
+[0.10.0]: https://github.com/1mcp-app/agent/compare/v0.9.0..v0.10.0
+[0.9.0]: https://github.com/1mcp-app/agent/compare/v0.8.2..v0.9.0
+[0.8.2]: https://github.com/1mcp-app/agent/compare/v0.8.1..v0.8.2
+[0.8.1]: https://github.com/1mcp-app/agent/compare/v0.8.0..v0.8.1
+[0.8.0]: https://github.com/1mcp-app/agent/compare/v0.7.0..v0.8.0
+[0.7.0]: https://github.com/1mcp-app/agent/compare/v0.6.0..v0.7.0
+[0.6.0]: https://github.com/1mcp-app/agent/compare/v0.5.0..v0.6.0
+[0.5.0]: https://github.com/1mcp-app/agent/compare/v0.4.0..v0.5.0
+[0.4.0]: https://github.com/1mcp-app/agent/compare/v0.3.0..v0.4.0
+[0.3.0]: https://github.com/1mcp-app/agent/compare/v0.2.0..v0.3.0
+[0.2.0]: https://github.com/1mcp-app/agent/compare/v0.1.0..v0.2.0
+
+<!-- generated by git-cliff -->
+
+
+=== ./../mcps/agent/tsconfig.build.json ===
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./build",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "build", "test/**/*", "src/**/*.test.ts"]
+}
+
+
+=== ./../mcps/agent/tsconfig.eslint.json ===
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "."
+  },
+  "include": ["src/**/*", "test/**/*", "vitest.config.ts", "vitest.e2e.config.ts", "*.js", "*.ts"]
+}
+
+
+=== ./../mcps/agent/README.md ===
+# 1MCP - One MCP Server for All
+
+A unified Model Context Protocol server implementation that aggregates multiple MCP servers into one.
+
+[![NPM Version](https://img.shields.io/npm/v/@1mcp/agent)](https://www.npmjs.com/package/@1mcp/agent)
+[![NPM License](https://img.shields.io/npm/l/@1mcp/agent)](https://www.npmjs.com/package/@1mcp/agent)
+[![smithery badge](https://smithery.ai/badge/@1mcp-app/agent)](https://smithery.ai/server/@1mcp-app/agent)
+
+## Overview
+
+1MCP (One MCP) is designed to simplify the way you work with AI assistants. Instead of configuring multiple MCP servers for different clients (Claude Desktop, Cherry Studio, Cursor, Roo Code, Claude, etc.), 1MCP provides a single, unified server that:
+
+- Aggregates multiple MCP servers into one unified interface
+- Reduces system resource usage by eliminating redundant server instances
+- Simplifies configuration management across different AI assistants
+- Provides a standardized way for AI models to interact with external tools and resources
+- Supports dynamic configuration reloading without server restart
+- Handles graceful shutdown and resource cleanup
+- Includes comprehensive authentication and security features
+- Supports advanced filtering, pagination, and request optimization
+
+## Quick Start
+
+To enable Cursor to use existing MCP servers already configured in Claude Desktop, follow these steps:
+
+1. Run the 1MCP server with the Claude Desktop config file:
+
+```bash
+npx -y @1mcp/agent --config ~/Library/Application\ Support/Claude/claude_desktop_config.json
+```
+
+2. Add the 1MCP server to your Cursor config file (`~/.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "1mcp": {
+      "type": "http",
+      "url": "http://localhost:3050/sse"
+    }
+  }
+}
+```
+
+3. Enjoy it!
+
+## Usage
+
+You can run the server directly using `npx`:
+
+```bash
+# Basic usage (starts server with SSE transport)
+npx -y @1mcp/agent
+
+# Use existing Claude Desktop config
+npx -y @1mcp/agent --config ~/Library/Application\ Support/Claude/claude_desktop_config.json
+
+# Use stdio transport instead of SSE
+npx -y @1mcp/agent --transport stdio
+
+# Show all available options
+npx -y @1mcp/agent --help
+```
+
+Available options:
+
+- `--transport, -t`: Choose transport type ("stdio", "http", or "sse" - sse is deprecated, default: "http")
+- `--config, -c`: Use a specific config file
+- `--port, -P`: Change HTTP port (default: 3050)
+- `--host, -H`: Change HTTP host (default: localhost)
+- `--tags, -g`: Filter servers by tags (see Tags section below)
+- `--pagination, -p`: Enable pagination for client/server lists (boolean, default: false)
+- `--auth`: Enable authentication (OAuth 2.1) - deprecated, use --enable-auth (boolean, default: false)
+- `--enable-auth`: Enable authentication (OAuth 2.1) (boolean, default: false)
+- `--enable-scope-validation`: Enable tag-based scope validation (boolean, default: true)
+- `--enable-enhanced-security`: Enable enhanced security middleware (boolean, default: false)
+- `--session-ttl`: Session expiry time in minutes (number, default: 1440)
+- `--session-storage-path`: Custom session storage directory path (string, default: undefined)
+- `--rate-limit-window`: OAuth rate limit window in minutes (number, default: 15)
+- `--rate-limit-max`: Maximum requests per OAuth rate limit window (number, default: 100)
+- `--help, -h`: Show help
+
+Example with environment variables:
+
+```bash
+# Using environment variables
+ONE_MCP_PORT=3051 ONE_MCP_TAGS=network,filesystem npx -y @1mcp/agent
+
+# Or in your shell configuration
+export ONE_MCP_PORT=3051
+export ONE_MCP_TAGS=network,filesystem
+npx -y @1mcp/agent
+```
+
+## Docker
+
+You can also run 1MCP using Docker:
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/1mcp-app/agent:latest
+
+# Run with HTTP transport (default)
+docker run -p 3050:3050 ghcr.io/1mcp-app/agent
+
+# Run with a custom config file
+docker run -p 3050:3050 -v /path/to/config.json:/config.json ghcr.io/1mcp-app/agent --config /config.json
+
+# Run with stdio transport
+docker run -i ghcr.io/1mcp-app/agent --transport stdio
+```
+
+Available image tags:
+
+- `latest`: Latest stable release
+- `vX.Y.Z`: Specific version (e.g. `v1.0.0`)
+- `sha-<commit>`: Specific commit
+
+### Environment Variables
+
+You can configure 1MCP using environment variables prefixed with `ONE_MCP_`:
+
+- `ONE_MCP_TRANSPORT`: Transport type ("stdio", "http", or "sse" - sse is deprecated, default: "http")
+- `ONE_MCP_PORT`: HTTP port (default: 3050)
+- `ONE_MCP_HOST`: HTTP host (default: "localhost")
+- `ONE_MCP_CONFIG`: Path to config file
+- `ONE_MCP_TAGS`: Comma-separated list of tags to filter servers
+- `ONE_MCP_PAGINATION`: Enable pagination for client/server lists (boolean, default: false)
+- `ONE_MCP_AUTH`: Enable authentication (OAuth 2.1) - deprecated, use ONE_MCP_ENABLE_AUTH (boolean, default: false)
+- `ONE_MCP_ENABLE_AUTH`: Enable authentication (OAuth 2.1) (boolean, default: false)
+- `ONE_MCP_ENABLE_SCOPE_VALIDATION`: Enable tag-based scope validation (boolean, default: true)
+- `ONE_MCP_ENABLE_ENHANCED_SECURITY`: Enable enhanced security middleware (boolean, default: false)
+- `ONE_MCP_SESSION_TTL`: Session expiry time in minutes (number, default: 1440)
+- `ONE_MCP_SESSION_STORAGE_PATH`: Custom session storage directory path (string, default: undefined)
+- `ONE_MCP_RATE_LIMIT_WINDOW`: OAuth rate limit window in minutes (number, default: 15)
+- `ONE_MCP_RATE_LIMIT_MAX`: Maximum requests per OAuth rate limit window (number, default: 100)
+
+Example with environment variables:
+
+```bash
+docker run -p 3051:3051 \
+  -e ONE_MCP_PORT=3051 \
+  -e ONE_MCP_TAGS=network,filesystem \
+  ghcr.io/1mcp-app/agent
+```
+
+### Understanding Tags
+
+Tags help you control which MCP servers are available to different clients. Think of tags as labels that describe what each server can do.
+
+#### How to Use Tags
+
+1. **In your server config**: Add tags to each server to describe its capabilities
+
+```json
+{
+  "mcpServers": {
+    "web-server": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"],
+      "tags": ["network", "web"],
+      "disabled": false
+    },
+    "file-server": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "~/Downloads"],
+      "tags": ["filesystem"],
+      "disabled": false
+    }
+  }
+}
+```
+
+2. **When starting 1MCP in stdio mode**: You can filter servers by tags
+
+```bash
+# Only start servers with the "network" tag
+npx -y @1mcp/agent --transport stdio --tags "network"
+
+# Start servers with either "network" or "filesystem" tags
+npx -y @1mcp/agent --transport stdio --tags "network,filesystem"
+```
+
+3. **When using SSE transport**: Clients can request servers with specific tags
+
+```json
+{
+  "mcpServers": {
+    "1mcp": {
+      "type": "http",
+      "url": "http://localhost:3050/sse?tags=network" // Only connect to network-capable servers
+    }
+  }
+}
+```
+
+Example tags:
+
+- `network`: For servers that make web requests
+- `filesystem`: For servers that handle file operations
+- `memory`: For servers that provide memory/storage
+- `shell`: For servers that run shell commands
+- `db`: For servers that handle database operations
+
+## Configuration
+
+### Global Configuration
+
+The server automatically manages configuration in a global location:
+
+- macOS/Linux: `~/.config/1mcp/mcp.json`
+- Windows: `%APPDATA%/1mcp/mcp.json`
+
+### Configuration File Format
+
+```json
+{
+  "mcpServers": {
+    "mcp-server-fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"],
+      "disabled": false
+    },
+    "server-memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "disabled": false
+    }
+  }
+}
+```
+
+## How It Works
+
+### System Architecture
+
+```mermaid
+graph TB
+    subgraph "AI Assistants"
+        A1[Claude Desktop]
+        A2[Cursor]
+        A3[Cherry Studio]
+        A4[Roo Code]
+    end
+
+    subgraph "1MCP Server"
+        MCP[1MCP Agent]
+    end
+
+    subgraph "MCP Servers"
+        S1[Server 1]
+        S2[Server 2]
+        S3[Server 3]
+    end
+
+    A1 -->|http| MCP
+    A2 -->|http| MCP
+    A3 -->|http| MCP
+    A4 -->|http| MCP
+
+    MCP --> |http| S1
+    MCP --> |stdio| S2
+    MCP --> |stdio| S3
+```
+
+### Request Flow
+
+```mermaid
+sequenceDiagram
+    participant Client as AI Assistant
+    participant 1MCP as 1MCP Server
+    participant MCP as MCP Servers
+
+    Client->>1MCP: Send MCP Request
+    activate 1MCP
+
+    1MCP->>1MCP: Validate Request
+    1MCP->>1MCP: Load Config
+    1MCP->>MCP: Forward Request
+    activate MCP
+
+    MCP-->>1MCP: Response
+    deactivate MCP
+
+    1MCP-->>Client: Forward Response
+    deactivate 1MCP
+```
+
+## Development
+
+Install dependencies:
+
+```bash
+pnpm install
+```
+
+Build the server:
+
+```bash
+pnpm build
+```
+
+For development with auto-rebuild:
+
+```bash
+pnpm watch
+```
+
+Run the server:
+
+```bash
+pnpm dev
+```
+
+### Debugging
+
+Using the [MCP Inspector](https://github.com/modelcontextprotocol/inspector), which is available as a package script:
+
+```bash
+pnpm inspector
+```
+
+The Inspector will provide a URL to access debugging tools in your browser.
+
+## Debugging & Source Maps
+
+This project uses [source-map-support](https://www.npmjs.com/package/source-map-support) to enhance stack traces. When you run the server, stack traces will reference the original TypeScript source files instead of the compiled JavaScript. This makes debugging much easier, as error locations and line numbers will match your source code.
+
+No extra setup is required—this is enabled by default. If you see a stack trace, it will point to `.ts` files and the correct line numbers. 🗺️
+
+
+=== ./../mcps/agent/glama.json ===
+{
+  "$schema": "https://glama.ai/mcp/schemas/server.json",
+  "maintainers": [
+    "xizhibei"
+  ]
+}
+
+=== ./../mcps/agent/CODE_OF_CONDUCT.md ===
+# Contributor Covenant Code of Conduct
+
+## Our Pledge
+
+We as members, contributors, and leaders pledge to make participation in our
+community a harassment-free experience for everyone, regardless of age, body
+size, visible or invisible disability, ethnicity, sex characteristics, gender
+identity and expression, level of experience, education, socio-economic status,
+nationality, personal appearance, race, religion, or sexual identity
+and orientation.
+
+We pledge to act and interact in ways that contribute to an open, welcoming,
+diverse, inclusive, and healthy community.
+
+## Our Standards
+
+Examples of behavior that contributes to a positive environment for our
+community include:
+
+* Demonstrating empathy and kindness toward other people
+* Being respectful of differing opinions, viewpoints, and experiences
+* Giving and gracefully accepting constructive feedback
+* Accepting responsibility and apologizing to those affected by our mistakes,
+  and learning from the experience
+* Focusing on what is best not just for us as individuals, but for the
+  overall community
+
+Examples of unacceptable behavior include:
+
+* The use of sexualized language or imagery, and sexual attention or
+  advances of any kind
+* Trolling, insulting or derogatory comments, and personal or political attacks
+* Public or private harassment
+* Publishing others' private information, such as a physical or email
+  address, without their explicit permission
+* Other conduct which could reasonably be considered inappropriate in a
+  professional setting
+
+## Enforcement Responsibilities
+
+Community leaders are responsible for clarifying and enforcing our standards of
+acceptable behavior and will take appropriate and fair corrective action in
+response to any behavior that they deem inappropriate, threatening, offensive,
+or harmful.
+
+Community leaders have the right and responsibility to remove, edit, or reject
+comments, commits, code, wiki edits, issues, and other contributions that are
+not aligned to this Code of Conduct, and will communicate reasons for moderation
+decisions when appropriate.
+
+## Scope
+
+This Code of Conduct applies within all community spaces, and also applies when
+an individual is officially representing the community in public spaces.
+Examples of representing our community include using an official e-mail address,
+posting via an official social media account, or acting as an appointed
+representative at an online or offline event.
+
+## Enforcement
+
+Instances of abusive, harassing, or otherwise unacceptable behavior may be
+reported to the community leaders responsible for enforcement at
+xuzp@1mcp.app.
+All complaints will be reviewed and investigated promptly and fairly.
+
+All community leaders are obligated to respect the privacy and security of the
+reporter of any incident.
+
+## Enforcement Guidelines
+
+Community leaders will follow these Community Impact Guidelines in determining
+the consequences for any action they deem in violation of this Code of Conduct:
+
+### 1. Correction
+
+**Community Impact**: Use of inappropriate language or other behavior deemed
+unprofessional or unwelcome in the community.
+
+**Consequence**: A private, written warning from community leaders, providing
+clarity around the nature of the violation and an explanation of why the
+behavior was inappropriate. A public apology may be requested.
+
+### 2. Warning
+
+**Community Impact**: A violation through a single incident or series
+of actions.
+
+**Consequence**: A warning with consequences for continued behavior. No
+interaction with the people involved, including unsolicited interaction with
+those enforcing the Code of Conduct, for a specified period of time. This
+includes avoiding interactions in community spaces as well as external channels
+like social media. Violating these terms may lead to a temporary or
+permanent ban.
+
+### 3. Temporary Ban
+
+**Community Impact**: A serious violation of community standards, including
+sustained inappropriate behavior.
+
+**Consequence**: A temporary ban from any sort of interaction or public
+communication with the community for a specified period of time. No public or
+private interaction with the people involved, including unsolicited interaction
+with those enforcing the Code of Conduct, is allowed during this period.
+Violating these terms may lead to a permanent ban.
+
+### 4. Permanent Ban
+
+**Community Impact**: Demonstrating a pattern of violation of community
+standards, including sustained inappropriate behavior,  harassment of an
+individual, or aggression toward or disparagement of classes of individuals.
+
+**Consequence**: A permanent ban from any sort of public interaction within
+the community.
+
+## Attribution
+
+This Code of Conduct is adapted from the [Contributor Covenant][homepage],
+version 2.0, available at
+https://www.contributor-covenant.org/version/2/0/code_of_conduct.html.
+
+Community Impact Guidelines were inspired by [Mozilla's code of conduct
+enforcement ladder](https://github.com/mozilla/diversity).
+
+[homepage]: https://www.contributor-covenant.org
+
+For answers to common questions about this code of conduct, see the FAQ at
+https://www.contributor-covenant.org/faq. Translations are available at
+https://www.contributor-covenant.org/translations.
+
+
+=== ./../mcps/agent/test/e2e/README.md ===
+# E2E Testing for 1MCP Agent
+
+This directory contains comprehensive end-to-end tests for the 1MCP agent, covering both stdio and HTTP transports with real MCP protocol communication.
+
+## Test Structure
+
+```
+src/test/e2e/
+├── fixtures/           # Test MCP servers
+├── utils/             # Test utilities and helpers
+├── stdio/             # Stdio transport E2E tests
+├── http/              # HTTP transport E2E tests
+├── integration/       # Multi-transport integration tests
+└── setup/             # Global test setup/teardown
+```
+
+## Test Fixtures
+
+The test fixtures include simple MCP servers for various testing scenarios:
+
+- **echo-server.js** - Reflects all requests for basic communication testing
+- **error-server.js** - Returns various error conditions for error handling tests
+- **capability-server.js** - Tests resource/tool/prompt capabilities
+- **slow-server.js** - Introduces delays for timeout testing
+- **crash-server.js** - Intentionally crashes for error scenario testing
+
+## Running E2E Tests
+
+### Working Demo Tests (Recommended)
+
+```bash
+# Run the working infrastructure demo
+pnpm test:e2e:demo
+
+# Or run all E2E tests (currently only demo tests)
+pnpm test:e2e
+```
+
+### Watch Mode
+
+```bash
+pnpm test:e2e:watch
+```
+
+### Full Test Suite (Future)
+
+```bash
+# Stdio transport tests (requires MCP SDK fixes)
+pnpm test:e2e:stdio
+
+# HTTP transport tests (requires full implementation)
+pnpm test:e2e:http
+
+# Integration tests (requires working servers)
+pnpm test:e2e:integration
+```
+
+### Combined Unit + E2E Tests
+
+```bash
+pnpm test:all
+```
+
+## Current Status
+
+✅ **Working Components:**
+
+- E2E test directory structure and organization
+- Test utilities (ConfigBuilder, ProtocolValidator, TestProcessManager)
+- Test configuration generation and management
+- Protocol validation for JSON-RPC and MCP messages
+- Basic process management for test scenarios
+
+⚠️ **Pending Components:**
+
+- MCP test servers (require SDK compatibility fixes)
+- Full stdio transport E2E tests (require working test servers)
+- HTTP transport E2E tests (require full HTTP implementation)
+- Integration tests (require working MCP protocol communication)
+
+The E2E test infrastructure is complete and demonstrated with working tests. The comprehensive test suites await resolution of MCP SDK compatibility issues and full server implementation.
+
+## Test Categories
+
+### Stdio Transport Tests
+
+- **stdio-lifecycle.test.ts** - Process management and server lifecycle
+- **stdio-protocol.test.ts** - MCP protocol communication over stdio
+- **stdio-errors.test.ts** - Error handling and edge cases
+- **stdio-integration.test.ts** - Full client workflow scenarios
+
+### HTTP Transport Tests
+
+- **http-auth.test.ts** - OAuth 2.1 authentication flows
+- **http-mcp.test.ts** - MCP protocol over HTTP
+- **http-management.test.ts** - Management API endpoints
+- **http-sessions.test.ts** - Session management and lifecycle
+
+### Integration Tests
+
+- **multi-transport.test.ts** - Mixed stdio + HTTP server scenarios
+- **performance.test.ts** - Performance and load testing
+
+## Test Utilities
+
+### TestProcessManager
+
+Manages child process lifecycle for stdio servers:
+
+```typescript
+const processManager = new TestProcessManager();
+const processInfo = await processManager.startProcess('test-server', {
+  command: 'node',
+  args: ['path/to/server.js'],
+  timeout: 10000,
+});
+```
+
+### McpTestClient
+
+Test client for MCP protocol communication:
+
+```typescript
+const client = new McpTestClient({
+  transport: 'stdio',
+  stdioConfig: {
+    command: 'node',
+    args: ['server.js'],
+  },
+});
+await client.connect();
+const response = await client.listTools();
+```
+
+### ConfigBuilder
+
+Dynamic test configuration generation:
+
+```typescript
+const config = ConfigBuilder.create()
+  .enableStdioTransport()
+  .enableHttpTransport(3000)
+  .addStdioServer('echo', 'node', ['echo-server.js'])
+  .writeToFile();
+```
+
+### ProtocolValidator
+
+Validates MCP message compliance:
+
+```typescript
+const validation = ProtocolValidator.validateRequest(request);
+expect(validation.valid).toBe(true);
+```
+
+## Configuration
+
+E2E tests use a separate vitest configuration (`vitest.e2e.config.ts`) with:
+
+- Extended timeouts (60s test timeout, 30s setup/teardown)
+- Sequential execution to avoid port conflicts
+- Retry logic for flaky network issues
+- Global setup/teardown for environment preparation
+
+## Environment Variables
+
+- `NODE_ENV=test` - Set automatically during E2E tests
+- `LOG_LEVEL=warn` - Reduces log noise during testing
+- `MCP_DISABLE_CONSOLE=true` - Disables console logging in MCP servers
+- `CI=true` - Enables single fork mode for CI environments
+
+## Best Practices
+
+### Writing E2E Tests
+
+1. **Use real processes** - E2E tests spawn actual MCP server processes
+2. **Test real protocols** - Use actual JSON-RPC over stdin/stdout or HTTP
+3. **Handle async properly** - Always await process startup/shutdown
+4. **Clean up resources** - Use beforeEach/afterEach for proper cleanup
+5. **Expect failures** - Test error conditions and edge cases
+
+### Performance Considerations
+
+- Tests run sequentially to avoid port conflicts
+- Each test gets a fresh server instance
+- Random ports are used for HTTP tests
+- Cleanup timeouts prevent hanging tests
+
+### CI/CD Integration
+
+E2E tests are designed to run in CI environments:
+
+- Cross-platform compatibility (Windows/Unix)
+- Proper resource cleanup
+- Reasonable timeout limits
+- Retry logic for flaky conditions
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Port conflicts** - Tests use random ports, but conflicts can still occur
+2. **Process cleanup** - Ensure proper cleanup in test teardown
+3. **Timing issues** - Use appropriate waits for async operations
+4. **Resource limits** - CI environments may have limited resources
+
+### Debugging
+
+- Use `test:e2e:watch` for interactive debugging
+- Check process manager logs for startup issues
+- Verify server fixture implementations
+- Use protocol validator for message format issues
+
+## Coverage and Quality
+
+E2E tests complement unit tests by:
+
+- Testing real process communication
+- Validating protocol compliance
+- Checking error handling under real conditions
+- Performance testing with actual workloads
+- Cross-platform compatibility verification
+
+The E2E test suite provides confidence that the 1MCP agent works correctly in real-world scenarios with actual MCP servers and clients.
+
