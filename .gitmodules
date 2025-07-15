@@ -1,0 +1,9 @@
+[submodule "mcps/agent"]
+	path = mcps/agent
+	url = https://github.com/1mcp-app/agent.git
+[submodule "mcps/MCPJungle"]
+	path = mcps/MCPJungle
+	url = https://github.com/mcpjungle/MCPJungle.git
+[submodule "mcps/mcp-open-library"]
+	path = mcps/mcp-open-library
+	url = https://github.com/8enSmith/mcp-open-library.git
