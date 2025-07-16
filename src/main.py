@@ -63,7 +63,7 @@ class DocumentAggregator:
             print(dir_path)
             self.aggregate_documents(dir_path)
     
-    def aggregate_documents(self, input_dir, extensions=(".txt", ".md", ".log", ".csv", ".json", ".xml")):
+    def aggregate_documents(self, input_dir, extensions=(".txt", ".md")):
         """
         Aggregates all readable documents in a directory into a single file and saves it to 'data/'.
         """
@@ -115,6 +115,8 @@ class TFIDF():
         return math.log(len(bloblist) / (1 + self.n_containing(word, bloblist)))
 
     def tfidf(self, word, blob, bloblist):
+        if word == "And" or word == "and" or word == "Of" or word == "of":
+            return 0
         return self.tf(word, blob) * self.idf(word, bloblist)
     
 
@@ -124,7 +126,7 @@ class TFIDF():
             print("Top words in document {}".format(i + 1))
             scores = {word: self.tfidf(word, blob, bloblist) for word in blob.words}
             sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-            for word, score in sorted_words[:3]:
+            for word, score in sorted_words[:10]:
                 print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
 
 if __name__ == "__main__":
