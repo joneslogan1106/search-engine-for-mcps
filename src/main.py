@@ -68,7 +68,7 @@ class DocumentAggregator:
             print(dir_path)
             self.aggregate_documents(dir_path)
     
-    def aggregate_documents(self, input_dir, extensions=(".txt", ".md")):
+    def aggregate_documents(self, input_dir, extensions=(".txt", ".md", ".log", ".csv", ".json", ".xml")):
         """
         Aggregates all readable documents in a directory into a single file and saves it to 'data/'.
         """
@@ -101,10 +101,6 @@ class DocumentAggregator:
                         yield filename, f.read()
                 except Exception as e:
                     print(f"Could not read {file_path}: {e}")
-
-
-
-
 class TFIDF():
 
     def __init__(self, directories):
@@ -128,12 +124,16 @@ class TFIDF():
     def run(self):
         bloblist = [tb(content) for filename, content in self.da]
         for i, blob in enumerate(bloblist):
-            print("Top words in {}".format(get_current_mcps(False)[i]))
             scores = {word: self.tfidf(word, blob, bloblist) for word in blob.words}
             sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
             print(sorted_words)
             #for word, score in sorted_words[:10]:
             #    print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
+            with open(f"tfidf/{get_current_mcps(False)[i]}.txt", "w") as file:
+                pass # No content written
+            with open(f"tfidf/{get_current_mcps(False)[i]}.txt", "w") as f:
+                f.write(str(sorted_words))
+            f.close()
 
 if __name__ == "__main__":
     print(get_current_mcps())
