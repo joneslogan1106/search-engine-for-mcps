@@ -3,7 +3,7 @@ import shutil
 import os
 from textblob import TextBlob as tb
 
-def get_current_mcps():
+def get_current_mcps(showFullRelativePath=True):
     mcps = []
     directory_path = "./../mcps/"
     try:
@@ -11,9 +11,14 @@ def get_current_mcps():
         all_entries = os.listdir(directory_path)
 
         # To list only directories, you can filter using os.path.isdir()
-        directories_only = [os.path.join(directory_path, entry) for entry in all_entries if os.path.isdir(os.path.join(directory_path, entry))]
-        mcps = directories_only
-        return mcps
+        if showFullRelativePath == True:
+            directories_only = [os.path.join(directory_path, entry) for entry in all_entries if os.path.isdir(os.path.join(directory_path, entry))]
+            mcps = directories_only
+            return mcps
+        elif showFullRelativePath == False:
+            directories_only = [os.path.join(entry) for entry in all_entries if os.path.isdir(os.path.join(directory_path, entry))]
+            mcps = directories_only
+            return mcps
 
     except FileNotFoundError:
         print(f"Error: Directory not found at '{directory_path}'")
@@ -115,7 +120,7 @@ class TFIDF():
         return math.log(len(bloblist) / (1 + self.n_containing(word, bloblist)))
 
     def tfidf(self, word, blob, bloblist):
-        if word == "And" or word == "and" or word == "Of" or word == "of":
+        if word == "And" or word == "and" or word == "Of" or word == "of" or word == "For" or word == "FOR" or word == "for" or word == "AND" or word == "Not" or word == "NOT" or word == "not" or word == "nor" or word == "NOR" or word == "but" or word == "BUT" or word == "But" or word == "or" or word == "OR" or word == "Or" or word == "THE" or word == "The" or word == "the" or word == "to" or word == "To" or word == "TO" or word == "IN" or word == "in" or word == "In" or word == "Is" or word == "IS" or word == "is":
             return 0
         return self.tf(word, blob) * self.idf(word, bloblist)
     
@@ -123,11 +128,12 @@ class TFIDF():
     def run(self):
         bloblist = [tb(content) for filename, content in self.da]
         for i, blob in enumerate(bloblist):
-            print("Top words in document {}".format(i + 1))
+            print("Top words in {}".format(get_current_mcps(False)[i]))
             scores = {word: self.tfidf(word, blob, bloblist) for word in blob.words}
             sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-            for word, score in sorted_words[:10]:
-                print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
+            print(sorted_words)
+            #for word, score in sorted_words[:10]:
+            #    print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
 
 if __name__ == "__main__":
     print(get_current_mcps())
