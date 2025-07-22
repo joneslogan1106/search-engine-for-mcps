@@ -1,5 +1,5 @@
 import math
-import shutil
+import ast
 import os
 from textblob import TextBlob as tb
 
@@ -126,7 +126,6 @@ class TFIDF():
         for i, blob in enumerate(bloblist):
             scores = {word: self.tfidf(word, blob, bloblist) for word in blob.words}
             sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-            print(sorted_words)
             #for word, score in sorted_words[:10]:
             #    print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
             with open(f"tfidf/{get_current_mcps(False)[i]}.txt", "w") as file:
@@ -136,7 +135,46 @@ class TFIDF():
             f.close()
 
 if __name__ == "__main__":
-    print(get_current_mcps())
-    tf = TFIDF([get_current_mcps()])
+    while True:
+        user_input = input("> ")
+        if user_input == "help":
+            print(" cache    - Aggrevates all the documents, and makes the TFIDF file for said documents.")
+            print(" search   - tests stuff")
+            print(" exit     - Exits the program")
+        elif user_input == "cache":
+            tf = TFIDF([get_current_mcps()])
+            tf.run()
+        elif user_input == "search":
+            print(" This option assumes you already ran the cache command")
+            current_mcps = get_current_mcps(False)
+            sorted_words_per_mcp = []
+            for i in current_mcps:
+                with open(f"./tfidf/{i}.txt") as f:
+                    lines = f.readlines()
+                    for line in lines:
+                        sorted_words_per_mcp.append([i, line.strip()])  # keep `i` directly
 
-    tf.run()
+            converted_data = []
+
+            for mcp_id, raw_string in sorted_words_per_mcp:
+                try:
+                    parsed = ast.literal_eval(raw_string)  # e.g., ('output', -0.0001, '16')
+                    parsed_list = list(parsed)
+                    converted_data.append({
+                        "mcp": mcp_id,
+                        "data": parsed_list
+                    })
+                except Exception as e:
+                    print(f"Error parsing line from MCP {mcp_id}: {e}")
+                    converted_data.append({
+                        "mcp": mcp_id,
+                        "data": []
+                    })
+            print(converted_data[0]['mcp'])
+            print(converted_data[0]['data'][0])
+            print(converted_data[0]['data'][0][0])
+            print(converted_data[0]['data'][0][1])
+        elif user_input == "exit":
+            break
+        else:
+            print(f"Unknown instruction {user_input}")
