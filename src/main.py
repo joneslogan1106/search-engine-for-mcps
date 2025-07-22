@@ -145,7 +145,7 @@ if __name__ == "__main__":
             tf = TFIDF([get_current_mcps()])
             tf.run()
         elif user_input == "search":
-            print(" This option assumes you already ran the cache command")
+            print("This option assumes you already ran the cache command")
             current_mcps = get_current_mcps(False)
             sorted_words_per_mcp = []
             for i in current_mcps:
