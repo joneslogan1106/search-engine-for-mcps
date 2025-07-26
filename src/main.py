@@ -2,6 +2,7 @@ import math
 import ast
 import os
 from textblob import TextBlob as tb
+import re
 
 def get_current_mcps(showFullRelativePath=True):
     mcps = []
@@ -142,6 +143,7 @@ class Search():
     def search(self):
         current_mcps = get_current_mcps(False)
         sorted_words_per_mcp = []
+        results = []
         for i in current_mcps:
             with open(f"./tfidf/{i}.txt") as f:
                 lines = f.readlines()
@@ -162,13 +164,19 @@ class Search():
                     "mcp": mcp_id,
                     "data": []
                 })
-        print(converted_data[0]['mcp'])
-        print(converted_data[0]['data'][0])
-        print(converted_data[0]['data'][0][0])
-        print(converted_data[0]['data'][0][1])
-        for i in converted_data[0]['data']:
-            if self.query in i[0]:
-                print(f"FOUND, data is {i}")
+        #print(converted_data[0]['mcp'])
+        #print(converted_data[0]['data'][0])
+        #print(converted_data[0]['data'][0][0])
+        #print(converted_data[0]['data'][0][1])
+        for x in range(len(converted_data)):
+            for i in converted_data[x]['data']:
+                if re.search(self.query, i[0]): # xizhibei
+                    results.append((converted_data[x]['mcp'], i[0], i[1]))
+        for y in range(len(results)):
+            if results[y][1].lower() == results[y-1][1].lower(): # prevents same thing with different letter casing only if they have the same TFIDF score
+                if results[y][2] == results[y-1][2]:
+                    continue
+            print(f"{results[y][0]}|{results[y][1]}|{results[y][2]}")
 if __name__ == "__main__":
     while True:
         user_input = input("> ")
