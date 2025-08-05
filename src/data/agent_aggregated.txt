@@ -26,7 +26,7 @@
 === ./../mcps/agent/package.json ===
 {
   "name": "@1mcp/agent",
-  "version": "0.14.0",
+  "version": "0.16.0",
   "description": "One MCP server to aggregate them all - A unified Model Context Protocol server implementation",
   "keywords": [
     "mcp",
@@ -82,12 +82,14 @@
   "scripts": {
     "dev": "LOG_LEVEL=debug tsc-watch --project tsconfig.build.json --onSuccess \"node build/index.js --config ./mcp.json --port 3051 --enable-auth\"",
     "build": "tsc --project tsconfig.build.json && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "clean": "rm -rf build",
     "prepare": "husky || true",
     "watch": "tsc --watch --project tsconfig.build.json",
     "inspector": "npx -y @modelcontextprotocol/inspector",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.{js,ts}\" \"test/**/*.{js,ts}\"",
+    "format:check": "prettier --check \"src/**/*.{js,ts}\" \"test/**/*.{js,ts}\"",
     "typecheck": "tsc --noEmit --project tsconfig.test.json",
     "test": "pnpm test:unit && pnpm test:e2e",
     "test:unit": "vitest run",
@@ -95,10 +97,13 @@
     "test:unit:coverage": "vitest run --coverage",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "test:e2e:watch": "vitest --config vitest.e2e.config.ts",
-    "test:e2e:coverage": "vitest run --config vitest.e2e.config.ts --coverage"
+    "test:e2e:coverage": "vitest run --config vitest.e2e.config.ts --coverage",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.15.0",
+    "@modelcontextprotocol/sdk": "^1.16.0",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
@@ -112,18 +117,24 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@braintree/sanitize-url": "^7.1.1",
     "@eslint/js": "^9.22.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@types/body-parser": "^1.19.5",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.0",
     "@types/node": "^24.0.0",
+    "@types/supertest": "^6.0.3",
     "@types/uuid": "^10.0.0",
     "@types/yargs": "^17.0.33",
     "@typescript-eslint/eslint-plugin": "^8.27.0",
     "@typescript-eslint/parser": "^8.27.0",
     "@vitest/coverage-v8": "^1.4.0",
     "axios": "^1.10.0",
+    "cytoscape": "^3.32.1",
+    "cytoscape-cose-bilkent": "^4.1.0",
+    "dayjs": "^1.11.13",
+    "debug": "^4.4.1",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
@@ -131,11 +142,15 @@
     "husky": "^9.1.7",
     "jiti": "^2.4.2",
     "lint-staged": "^16.1.2",
+    "mermaid": "^11.9.0",
     "prettier": "^3.5.3",
+    "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
     "tsc-watch": "^7.1.1",
     "typescript": "^5.3.3",
     "vite-tsconfig-paths": "^5.1.4",
+    "vitepress": "^1.6.3",
+    "vitepress-plugin-mermaid": "^2.0.17",
     "vitest": "^1.4.0"
   },
   "pnpm": {
@@ -701,6 +716,47 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.16.0] - 2025-07-30
+
+### 🚀 Features
+- Add health info level configuration and sanitization features by @xizhibei
+- Implement health monitoring endpoints and service by @xizhibei
+
+### 💼 Other
+- Merge pull request #86 from 1mcp-app/docs-website by @xizhibei in [#86](https://github.com/1mcp-app/agent/pull/86)
+
+### 📚 Documentation
+- Remove outdated Prometheus monitoring examples from health check documentation by @xizhibei
+- Update logo references and add new logo image by @xizhibei
+- Enhance authentication guide with management dashboard visuals by @xizhibei
+- Add Google Analytics tracking script to VitePress configuration by @xizhibei
+- Refine getting started guide by consolidating next steps by @xizhibei
+- Add VitePress documentation and deployment workflow by @xizhibei
+- Update README.md with enhanced structure and new sections by @xizhibei
+
+### ⚙️ Miscellaneous Tasks
+- Streamline pnpm setup in deployment workflow by @xizhibei
+- Enhance package.json scripts and clean up test files by @xizhibei
+
+
+## [0.15.0] - 2025-07-22
+
+### 🚀 Features
+- Implement trust proxy configuration for Express.js by @xizhibei
+- Integrate authentication middleware into SSE and streamable HTTP routes by @xizhibei
+- Enhance ExpressServer with MCP configuration and scope support by @xizhibei
+- Add startup logo display utility by @xizhibei
+
+### 💼 Other
+- Merge pull request #80 from 1mcp-app/dependabot/npm_and_yarn/npm_and_yarn-e04d5d616f by @xizhibei in [#80](https://github.com/1mcp-app/agent/pull/80)
+
+### 🚜 Refactor
+- Streamline HTTP trust proxy integration tests by @xizhibei
+
+### ⚙️ Miscellaneous Tasks
+- Update development script and SDK version by @xizhibei
+
+
 ## [0.14.0] - 2025-07-21
 
 ### 🚀 Features
@@ -1105,6 +1161,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * @xizhibei made their first contribution in [#1](https://github.com/1mcp-app/agent/pull/1)
 * @dependabot[bot] made their first contribution
 
+[0.16.0]: https://github.com/1mcp-app/agent/compare/v0.15.0..v0.16.0
+[0.15.0]: https://github.com/1mcp-app/agent/compare/v0.14.0..v0.15.0
 [0.14.0]: https://github.com/1mcp-app/agent/compare/v0.13.1..v0.14.0
 [0.13.1]: https://github.com/1mcp-app/agent/compare/v0.13.0..v0.13.1
 [0.13.0]: https://github.com/1mcp-app/agent/compare/v0.12.0..v0.13.0
@@ -1162,18 +1220,39 @@ A unified Model Context Protocol server implementation that aggregates multiple 
 [![NPM License](https://img.shields.io/npm/l/@1mcp/agent)](https://www.npmjs.com/package/@1mcp/agent)
 [![smithery badge](https://smithery.ai/badge/@1mcp-app/agent)](https://smithery.ai/server/@1mcp-app/agent)
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Prerequisites](#prerequisites)
+- [Usage](#usage)
+- [Docker](#docker)
+- [Trust Proxy Configuration](#trust-proxy-configuration)
+- [Understanding Tags](#understanding-tags)
+- [Configuration](#configuration)
+- [Authentication](#authentication)
+- [Health Monitoring](#health-monitoring)
+- [How It Works](#how-it-works)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Overview
 
-1MCP (One MCP) is designed to simplify the way you work with AI assistants. Instead of configuring multiple MCP servers for different clients (Claude Desktop, Cherry Studio, Cursor, Roo Code, Claude, etc.), 1MCP provides a single, unified server that:
+1MCP (One MCP) is designed to simplify the way you work with AI assistants. Instead of configuring multiple MCP servers for different clients (Claude Desktop, Cherry Studio, Cursor, Roo Code, Claude, etc.), 1MCP provides a single, unified server.
 
-- Aggregates multiple MCP servers into one unified interface
-- Reduces system resource usage by eliminating redundant server instances
-- Simplifies configuration management across different AI assistants
-- Provides a standardized way for AI models to interact with external tools and resources
-- Supports dynamic configuration reloading without server restart
-- Handles graceful shutdown and resource cleanup
-- Includes comprehensive authentication and security features
-- Supports advanced filtering, pagination, and request optimization
+## Features
+
+- **Unified Interface**: Aggregates multiple MCP servers into one.
+- **Resource Friendly**: Reduces system resource usage by eliminating redundant server instances.
+- **Simplified Configuration**: Simplifies configuration management across different AI assistants.
+- **Standardized Interaction**: Provides a standardized way for AI models to interact with external tools and resources.
+- **Dynamic Configuration**: Supports dynamic configuration reloading without server restart.
+- **Graceful Shutdown**: Handles graceful shutdown and resource cleanup.
+- **Secure**: Includes comprehensive authentication and security features.
+- **Optimized**: Supports advanced filtering, pagination, and request optimization.
+- **Health Monitoring**: Built-in health check endpoints for monitoring and observability.
 
 ## Quick Start
 
@@ -1200,6 +1279,11 @@ npx -y @1mcp/agent --config ~/Library/Application\ Support/Claude/claude_desktop
 
 3. Enjoy it!
 
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) (version 21 or higher)
+- [pnpm](https://pnpm.io/)
+
 ## Usage
 
 You can run the server directly using `npx`:
@@ -1217,30 +1301,34 @@ npx -y @1mcp/agent --transport stdio
 # Use external URL for reverse proxy setup (nginx, etc.)
 npx -y @1mcp/agent --external-url https://example.com
 
+# Configure trust proxy for reverse proxy setup
+npx -y @1mcp/agent --trust-proxy=192.168.1.1
+
 # Show all available options
 npx -y @1mcp/agent --help
 ```
 
 Available options:
 
-| Option (CLI)                 | Environment Variable               | Description                                                                  |  Default  |
-| :--------------------------- | :--------------------------------- | :--------------------------------------------------------------------------- | :-------: |
-| `--transport`, `-t`          | `ONE_MCP_TRANSPORT`                | Choose transport type ("stdio", "http", or "sse")                            |  "http"   |
-| `--config`, `-c`             | `ONE_MCP_CONFIG`                   | Use a specific config file                                                   |           |
-| `--port`, `-P`               | `ONE_MCP_PORT`                     | Change HTTP port                                                             |   3050    |
-| `--host`, `-H`               | `ONE_MCP_HOST`                     | Change HTTP host                                                             | localhost |
-| `--external-url`, `-u`       | `ONE_MCP_EXTERNAL_URL`             | External URL for OAuth callbacks and public URLs (e.g., https://example.com) |           |
-| `--tags`, `-g`               | `ONE_MCP_TAGS`                     | Filter servers by tags                                                       |           |
-| `--pagination`, `-p`         | `ONE_MCP_PAGINATION`               | Enable pagination for client/server lists (boolean)                          |   false   |
-| `--auth`                     | `ONE_MCP_AUTH`                     | Enable authentication (OAuth 2.1) - **Deprecated**                           |   false   |
-| `--enable-auth`              | `ONE_MCP_ENABLE_AUTH`              | Enable authentication (OAuth 2.1)                                            |   false   |
-| `--enable-scope-validation`  | `ONE_MCP_ENABLE_SCOPE_VALIDATION`  | Enable tag-based scope validation (boolean)                                  |   true    |
-| `--enable-enhanced-security` | `ONE_MCP_ENABLE_ENHANCED_SECURITY` | Enable enhanced security middleware (boolean)                                |   false   |
-| `--session-ttl`              | `ONE_MCP_SESSION_TTL`              | Session expiry time in minutes (number)                                      |   1440    |
-| `--session-storage-path`     | `ONE_MCP_SESSION_STORAGE_PATH`     | Custom session storage directory path (string)                               |           |
-| `--rate-limit-window`        | `ONE_MCP_RATE_LIMIT_WINDOW`        | OAuth rate limit window in minutes (number)                                  |    15     |
-| `--rate-limit-max`           | `ONE_MCP_RATE_LIMIT_MAX`           | Maximum requests per OAuth rate limit window (number)                        |    100    |
-| `--help`, `-h`               |                                    | Show help                                                                    |           |
+| Option (CLI)                 | Environment Variable               | Description                                                                   |  Default   |
+| :--------------------------- | :--------------------------------- | :---------------------------------------------------------------------------- | :--------: |
+| `--transport`, `-t`          | `ONE_MCP_TRANSPORT`                | Choose transport type ("stdio", "http", or "sse")                             |   "http"   |
+| `--config`, `-c`             | `ONE_MCP_CONFIG`                   | Use a specific config file                                                    |            |
+| `--port`, `-P`               | `ONE_MCP_PORT`                     | Change HTTP port                                                              |    3050    |
+| `--host`, `-H`               | `ONE_MCP_HOST`                     | Change HTTP host                                                              | localhost  |
+| `--external-url`, `-u`       | `ONE_MCP_EXTERNAL_URL`             | External URL for OAuth callbacks and public URLs (e.g., https://example.com)  |            |
+| `--trust-proxy`              | `ONE_MCP_TRUST_PROXY`              | Trust proxy configuration for client IP detection (boolean, IP, CIDR, preset) | "loopback" |
+| `--tags`, `-g`               | `ONE_MCP_TAGS`                     | Filter servers by tags                                                        |            |
+| `--pagination`, `-p`         | `ONE_MCP_PAGINATION`               | Enable pagination for client/server lists (boolean)                           |   false    |
+| `--enable-auth`              | `ONE_MCP_ENABLE_AUTH`              | Enable authentication (OAuth 2.1)                                             |   false    |
+| `--enable-scope-validation`  | `ONE_MCP_ENABLE_SCOPE_VALIDATION`  | Enable tag-based scope validation (boolean)                                   |    true    |
+| `--enable-enhanced-security` | `ONE_MCP_ENABLE_ENHANCED_SECURITY` | Enable enhanced security middleware (boolean)                                 |   false    |
+| `--session-ttl`              | `ONE_MCP_SESSION_TTL`              | Session expiry time in minutes (number)                                       |    1440    |
+| `--session-storage-path`     | `ONE_MCP_SESSION_STORAGE_PATH`     | Custom session storage directory path (string)                                |            |
+| `--rate-limit-window`        | `ONE_MCP_RATE_LIMIT_WINDOW`        | OAuth rate limit window in minutes (number)                                   |     15     |
+| `--rate-limit-max`           | `ONE_MCP_RATE_LIMIT_MAX`           | Maximum requests per OAuth rate limit window (number)                         |    100     |
+| `--health-info-level`        | `ONE_MCP_HEALTH_INFO_LEVEL`        | Health endpoint information detail level ("full", "basic", "minimal")         | "minimal"  |
+| `--help`, `-h`               |                                    | Show help                                                                     |            |
 
 ## Docker
 
@@ -1278,14 +1366,32 @@ docker run -p 3051:3051 \
 # With external URL for reverse proxy
 docker run -p 3050:3050 \
   -e ONE_MCP_EXTERNAL_URL=https://mcp.example.com \
+  -e ONE_MCP_TRUST_PROXY=true \
   ghcr.io/1mcp-app/agent
 ```
 
-### Understanding Tags
+## Trust Proxy Configuration
+
+When running 1MCP behind a reverse proxy, configure trust proxy settings for proper client IP detection:
+
+```bash
+# Default (safe for local development)
+npx -y @1mcp/agent --trust-proxy=loopback
+
+# Behind reverse proxy
+npx -y @1mcp/agent --trust-proxy=192.168.1.1
+
+# Behind CDN/Cloudflare
+npx -y @1mcp/agent --trust-proxy=true
+```
+
+See [docs/TRUST_PROXY.md](docs/TRUST_PROXY.md) for detailed configuration options, security considerations, and reverse proxy setup examples.
+
+## Understanding Tags
 
 Tags help you control which MCP servers are available to different clients. Think of tags as labels that describe what each server can do.
 
-#### How to Use Tags
+### How to Use Tags
 
 1. **In your server config**: Add tags to each server to describe its capabilities
 
@@ -1367,7 +1473,39 @@ The server automatically manages configuration in a global location:
 }
 ```
 
+## Authentication
+
+1MCP supports OAuth 2.1 for secure authentication. To enable it, use the `--enable-auth` flag. The `--auth` flag is deprecated and will be removed in a future version.
+
+When authentication is enabled, 1MCP acts as an OAuth 2.1 provider, allowing client applications to securely connect. This ensures that only authorized clients can access the MCP servers.
+
+## Health Monitoring
+
+1MCP provides comprehensive health check endpoints for monitoring and observability:
+
+### Health Check Endpoints
+
+- **`GET /health`** - Complete health status including system metrics, server status, and configuration
+- **`GET /health/live`** - Simple liveness probe (always returns 200 if server is running)
+- **`GET /health/ready`** - Readiness probe (returns 200 if configuration is loaded and ready)
+
+### Health Status Levels
+
+- **`healthy`** - All systems operational (HTTP 200)
+- **`degraded`** - Some issues but still functional (HTTP 200)
+- **`unhealthy`** - Critical issues affecting functionality (HTTP 503)
+
+### Monitoring Integration
+
+Use these endpoints with:
+
+- Load balancers (health checks)
+- Container orchestration (Kubernetes health probes)
+- CI/CD pipelines (deployment validation)
+
 ## How It Works
+
+1MCP acts as a proxy, managing and aggregating multiple MCP servers. It starts and stops these servers as subprocesses and forwards requests from AI assistants to the appropriate server. This architecture allows for a single point of entry for all MCP traffic, simplifying management and reducing overhead.
 
 ### System Architecture
 
@@ -1459,11 +1597,19 @@ pnpm inspector
 
 The Inspector will provide a URL to access debugging tools in your browser.
 
-## Debugging & Source Maps
+### Debugging & Source Maps
 
 This project uses [source-map-support](https://www.npmjs.com/package/source-map-support) to enhance stack traces. When you run the server, stack traces will reference the original TypeScript source files instead of the compiled JavaScript. This makes debugging much easier, as error locations and line numbers will match your source code.
 
 No extra setup is required—this is enabled by default. If you see a stack trace, it will point to `.ts` files and the correct line numbers. 🗺️
+
+## Contributing
+
+Contributions are welcome! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## License
+
+This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
 
 
 === ./../mcps/agent/glama.json ===
@@ -1603,6 +1749,3556 @@ enforcement ladder](https://github.com/mozilla/diversity).
 For answers to common questions about this code of conduct, see the FAQ at
 https://www.contributor-covenant.org/faq. Translations are available at
 https://www.contributor-covenant.org/translations.
+
+
+=== ./../mcps/agent/docs/README.md ===
+# 1MCP Documentation
+
+This directory contains the VitePress-powered documentation site for 1MCP.
+
+## Local Development
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start development server
+pnpm docs:dev
+
+# Build for production
+pnpm docs:build
+
+# Preview production build
+pnpm docs:preview
+```
+
+## Directory Structure
+
+```
+docs/
+├── .vitepress/
+│   └── config.js          # VitePress configuration
+├── public/                # Static assets
+│   ├── logo.svg          # Site logo
+│   └── favicon.ico       # Site favicon
+├── guide/                # Getting started guides
+├── reference/            # Technical reference
+└── index.md              # Homepage
+```
+
+## Adding Content
+
+1. **New pages**: Add `.md` files in appropriate directories
+2. **Navigation**: Update `docs/.vitepress/config.js` sidebar configuration
+3. **Links**: Use absolute paths (`/guide/getting-started`) for internal links
+4. **Assets**: Place images and files in `docs/public/`
+
+## Deployment
+
+The site automatically deploys to GitHub Pages on pushes to `main` branch that affect the `docs/` directory.
+
+- **Live site**: `https://1mcp-app.github.io/agent/`
+- **Workflow**: `.github/workflows/deploy-docs.yml`
+
+## Writing Guidelines
+
+- Use clear, concise headings
+- Include code examples for technical content
+- Add frontmatter for page metadata
+- Keep navigation shallow (max 3 levels)
+- Test all internal links before committing
+
+## VitePress Features
+
+- **Search**: Built-in local search
+- **Dark mode**: Automatic theme switching
+- **Mobile responsive**: Works on all devices
+- **Fast**: Optimized for performance
+- **SEO friendly**: Meta tags, sitemap, structured data
+
+
+=== ./../mcps/agent/docs/index.md ===
+---
+layout: home
+
+hero:
+  name: '1MCP Agent'
+  text: 'One MCP server to aggregate them all'
+  tagline: A unified Model Context Protocol server implementation that acts as a proxy/multiplexer for multiple MCP servers
+  image:
+    src: /images/logo.png
+    alt: 1MCP Logo
+  actions:
+    - theme: brand
+      text: Get Started
+      link: /guide/getting-started
+    - theme: alt
+      text: Quick Start
+      link: /guide/quick-start
+    - theme: alt
+      text: View on GitHub
+      link: https://github.com/1mcp-app/agent
+
+features:
+  - icon: 🔄
+    title: Unified Interface
+    details: Single endpoint that aggregates multiple MCP servers, simplifying AI assistant integration
+  - icon: 🔒
+    title: OAuth 2.1 Authentication
+    details: Production-ready security with scope-based authorization and secure token management
+  - icon: ⚡
+    title: High Performance
+    details: Efficient request forwarding with proper error handling and monitoring capabilities
+  - icon: 🛡️
+    title: Security First
+    details: Stdio transport isolation, input sanitization, and comprehensive audit logging
+
+  - icon: 🔧
+    title: Easy Configuration
+    details: Single JSON configuration file with hot-reload support and validation
+---
+
+## Why 1MCP?
+
+**The Problem**: AI assistants need to connect to multiple MCP servers, but managing dozens of individual connections is complex, unreliable, and security-intensive.
+
+**The Solution**: 1MCP acts as a unified proxy/multiplexer that aggregates multiple MCP servers behind a single, reliable interface.
+
+```mermaid
+graph TB
+    subgraph "AI Clients"
+        C1[Claude Desktop]
+        C2[Cursor]
+        C3[Cherry Studio]
+    end
+
+    subgraph "1MCP Proxy"
+        P[Unified Interface<br/>HTTP/SSE + OAuth]
+    end
+
+    subgraph "MCP Servers"
+        S1[Filesystem]
+        S2[Web Search]
+        S3[Database]
+        S4[Memory]
+    end
+
+    C1 --> P
+    C2 --> P
+    C3 --> P
+    P --> S1
+    P --> S2
+    P --> S3
+    P --> S4
+```
+
+## Quick Example
+
+Start with a simple configuration:
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+      "description": "File system access"
+    },
+    "search": {
+      "command": ["npx", "-y", "@modelcontextprotocol/server-web-search"],
+      "description": "Web search capabilities"
+    }
+  }
+}
+```
+
+```bash
+# Start the proxy
+npx -y @1mcp/agent --config mcp.json --port 3000
+```
+
+Now your agent is running. Connect your MCP client to `http://localhost:3000` to start using your aggregated tools.
+
+## Key Benefits
+
+- **🎯 Simplified Integration**: One connection instead of many
+- **🔐 Production Security**: OAuth 2.1 with scope-based permissions
+- **📈 Better Reliability**: Centralized error handling and monitoring
+- **⚙️ Easy Management**: Single configuration, hot-reload support
+- **🚀 Performance**: Efficient multiplexing with minimal overhead
+
+## What's Next?
+
+<div class="vp-feature-grid">
+  <a href="/guide/getting-started" class="vp-feature-box">
+    <h3>📚 Learn the Basics</h3>
+    <p>Understand 1MCP architecture and core concepts</p>
+  </a>
+
+  <a href="/guide/quick-start" class="vp-feature-box">
+    <h3>⚡ Quick Start</h3>
+    <p>Get running in 5 minutes with basic configuration</p>
+  </a>
+
+  <a href="/reference/architecture" class="vp-feature-box">
+    <h3>🏗️ Deep Dive</h3>
+    <p>Comprehensive system architecture and design decisions</p>
+  </a>
+</div>
+
+<style>
+.vp-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.vp-feature-box {
+  padding: 1.5rem;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: border-color 0.25s;
+}
+
+.vp-feature-box:hover {
+  border-color: var(--vp-c-brand);
+}
+
+.vp-feature-box h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.vp-feature-box p {
+  margin: 0;
+  color: var(--vp-c-text-2);
+  line-height: 1.4;
+}
+</style>
+
+
+=== ./../mcps/agent/docs/reference/security.md ===
+# Security Features
+
+This document outlines the comprehensive security features implemented in the MCP agent system.
+
+## Tags-as-OAuth-Scopes Security Model
+
+### Core Concept
+
+Tags are mapped to OAuth 2.1 scopes using the format `tag:{tag-name}` (e.g., `tag:web`, `tag:db`). This provides fine-grained access control where clients can only access servers for which they have been explicitly granted scope permissions.
+
+### Security Benefits
+
+- **Fine-grained access control**: Clients only access authorized servers
+- **Standards compliance**: Uses OAuth 2.1 scopes properly
+- **User consent**: Explicit approval of requested permissions via web interface
+- **Fail-secure design**: Denies access on any validation failure
+- **Scope expiration**: Scopes expire with access tokens
+
+## Scope Validation Security
+
+### Input Validation (`src/utils/scopeValidation.ts`)
+
+- **Strict format validation**: Only `tag:[a-zA-Z0-9_-]+` patterns allowed
+- **Length limits**: Maximum scope and tag length enforcement
+- **Injection prevention**: Blocks path traversal, command injection, and special characters
+- **Count limits**: Maximum number of scopes per request
+- **Duplicate detection**: Prevents duplicate scopes in requests
+
+### Allowlist Approach
+
+- Scopes are validated against available server tags only
+- No wildcard or pattern matching allowed
+- Fail-secure validation with comprehensive error logging
+
+## Authentication & Authorization
+
+### OAuth 2.1 Implementation (`src/auth/sdkOAuthServerProvider.ts`)
+
+- **PKCE support**: Prevents authorization code interception
+- **Client registration**: Dynamic client registration with validation
+- **Token management**: Secure token generation, validation, and revocation
+- **Session management**: Secure session storage with expiration
+- **Web-based consent**: User-friendly consent interface for scope approval
+
+### Scope-Based Authorization Middleware (`src/transport/http/middlewares/scopeAuthMiddleware.ts`)
+
+- **Token verification**: Validates Bearer tokens on every request
+- **Scope enforcement**: Ensures requested tags are covered by granted scopes
+- **Backward compatibility**: Works seamlessly when auth is disabled
+- **Fail-secure design**: Denies access on any error condition
+
+## Rate Limiting
+
+### Multi-tier Rate Limiting
+
+1. **General OAuth endpoints**: Standard rate limiting for OAuth operations
+2. **Sensitive operations**: Stricter rate limiting for consent and token operations
+3. **Adaptive limits**: Different limits for different operation types
+
+### Rate Limiting Features
+
+- **IP-based limiting**: Prevents abuse from specific addresses
+- **Time window controls**: Configurable time windows for rate limits
+- **Security logging**: Logs rate limit violations for monitoring
+- **Graceful degradation**: Proper error responses when limits exceeded
+
+## Security Middleware (`src/transport/http/middlewares/securityMiddleware.ts`)
+
+### Security Headers
+
+- **X-Frame-Options**: Prevents clickjacking attacks
+- **X-Content-Type-Options**: Prevents MIME type sniffing
+- **X-XSS-Protection**: Enables XSS protection in browsers
+- **Content-Security-Policy**: Restricts resource loading for HTML responses
+- **Referrer-Policy**: Controls referrer information leakage
+
+### Input Validation
+
+- **Injection protection**: Detects and blocks common injection patterns
+- **Header validation**: Validates all HTTP headers for suspicious content
+- **Query parameter validation**: Validates query parameters for malicious content
+- **Body validation**: Validates request bodies for POST operations
+
+### Session Security
+
+- **Cache control**: Prevents caching of sensitive responses
+- **Robot exclusion**: Prevents indexing of OAuth endpoints
+- **Timing attack prevention**: Random delays for authentication endpoints
+
+## Audit Logging
+
+### Comprehensive Audit Trail (`src/utils/scopeValidation.ts`)
+
+- **Scope operations**: All scope validation and authorization events
+- **Client identification**: Tracks which clients perform operations
+- **Success/failure tracking**: Logs both successful and failed operations
+- **Timestamp recording**: Precise timing for all security events
+
+### Security Event Logging
+
+- **Authentication events**: Login attempts, token generation, failures
+- **Authorization events**: Scope grants, denials, violations
+- **Rate limiting events**: When limits are exceeded
+- **Security violations**: Injection attempts, suspicious activity
+
+## Network Security
+
+### Transport Security
+
+- **HTTPS enforcement**: All production traffic over encrypted connections
+- **CORS configuration**: Proper cross-origin request handling
+- **Request size limits**: Prevents DoS via large requests
+
+### Error Handling
+
+- **Secure error responses**: No sensitive information in error messages
+- **Consistent error format**: Standard OAuth 2.1 error format
+- **Error logging**: Detailed errors logged server-side only
+
+## Input Sanitization (`src/utils/sanitization.ts`)
+
+### Context-Aware Sanitization
+
+- **HTML escaping**: Prevents XSS in HTML responses
+- **URL parameter sanitization**: Safe handling of URL parameters
+- **Server name sanitization**: Prevents injection via server names
+- **Error message sanitization**: Safe error message display
+
+## Backward Compatibility
+
+### Auth-Disabled Mode
+
+- **Graceful degradation**: Full functionality when auth is disabled
+- **Tag filtering preservation**: Original tag filtering when auth off
+- **Configuration flexibility**: Runtime auth enable/disable
+
+### Migration Support
+
+- **Incremental adoption**: Can enable auth gradually
+- **Existing client support**: Works with non-OAuth clients when auth disabled
+
+## Security Testing
+
+### Comprehensive Test Coverage
+
+- **Unit tests**: Scope validation, middleware functions
+- **Integration tests**: Full authentication flows
+- **Security tests**: Injection attempts, edge cases, timing attacks
+- **Performance tests**: Load testing for rate limiting and validation
+
+### Security Edge Cases
+
+- **Buffer overflow prevention**: Input length validation
+- **Null byte injection prevention**: Input format validation
+- **Unicode attack prevention**: Character set restrictions
+- **Prototype pollution prevention**: Safe object handling
+
+## Security Best Practices
+
+### Development Guidelines
+
+- **Principle of least privilege**: Minimal required scopes granted
+- **Fail-secure design**: Default to deny access
+- **Defense in depth**: Multiple security layers
+- **Regular security audits**: Continuous security monitoring
+
+### Operational Security
+
+- **Secure configuration defaults**: Safe out-of-box configuration
+- **Environment-specific settings**: Different security levels per environment
+- **Security monitoring**: Real-time security event monitoring
+- **Incident response**: Clear procedures for security incidents
+
+## Compliance
+
+### Standards Adherence
+
+- **OAuth 2.1**: Full compliance with OAuth 2.1 specification
+- **RFC 7636**: PKCE implementation
+- **OWASP Top 10**: Protection against common web vulnerabilities
+- **Security headers**: Follows security header best practices
+
+### Privacy Protection
+
+- **Data minimization**: Only necessary data collected and stored
+- **Secure storage**: Encrypted session and token storage
+- **Access logging**: Audit trail without exposing sensitive data
+- **User consent**: Explicit consent for all data access
+
+
+=== ./../mcps/agent/docs/reference/architecture.md ===
+# 1MCP System Architecture
+
+> **Vision**: A unified, reliable proxy that makes multiple MCP servers appear as one, simplifying AI assistant integration while maintaining security and performance.
+
+## 🎯 Purpose & Context
+
+**Problem**: AI assistants need to connect to multiple MCP servers, but managing dozens of individual connections is complex, unreliable, and security-intensive.
+
+**Solution**: 1MCP acts as a unified proxy/multiplexer that aggregates multiple MCP servers behind a single, reliable interface.
+
+**Success Metrics**:
+
+- **Reliability**: Stable operation with proper error handling
+- **Performance**: Efficient request forwarding to backend servers
+- **Security**: OAuth 2.1 authentication and secure defaults
+- **Simplicity**: Single configuration file, easy deployment
+
+```mermaid
+graph TB
+    subgraph "AI Clients"
+        C1[Claude Desktop]
+        C2[Cursor]
+        C3[Cherry Studio]
+    end
+
+    subgraph "1MCP Proxy"
+        P[Unified Interface<br/>HTTP/SSE + OAuth]
+    end
+
+    subgraph "MCP Servers"
+        S1[Filesystem]
+        S2[Web Search]
+        S3[Database]
+        S4[Memory]
+    end
+
+    C1 --> P
+    C2 --> P
+    C3 --> P
+    P --> S1
+    P --> S2
+    P --> S3
+    P --> S4
+```
+
+## 📏 System Constraints
+
+### **Hard Constraints**
+
+- **Single Binary**: Must deploy as one executable, no external dependencies
+- **MCP Protocol**: Must be 100% compatible with MCP 1.x specification
+- **Stdio Transport**: Backend servers communicate only via stdio (security boundary)
+- **Configuration**: All config via single JSON file, hot-reloadable
+- **Memory**: Must run in <2GB RAM (Kubernetes pod limits)
+
+### **Soft Constraints**
+
+- **Concurrent Connections**: Handle multiple simultaneous client connections
+- **Backend Servers**: Support multiple MCP servers per instance
+- **Network**: Works behind corporate firewalls (HTTP/SSE only)
+- **Startup Time**: Fast startup for development iterations
+- **Dependencies**: Minimal external dependencies for security
+
+### **Why These Constraints**
+
+- **Single Binary**: Enterprise deployment requirement - no complex setup
+- **Stdio Only**: Security isolation between proxy and backends
+- **2GB Memory**: Customer Kubernetes cluster limitations
+- **Hot Reload**: Zero-downtime configuration updates required
+
+## 🏗️ Architectural Principles
+
+### **Principle 1: Reliability Over Performance**
+
+- System must stay operational even if individual backends fail
+- Graceful degradation preferred over fast failure
+- Connection management with retry logic and timeouts
+
+### **Principle 2: Security by Default**
+
+- All endpoints require authentication unless explicitly disabled
+- Backend servers run in isolated processes (stdio only)
+- Input sanitization on all external data
+- No sensitive data in logs
+
+### **Principle 3: Simplicity Over Flexibility**
+
+- Single deployment model, not configurable
+- Convention over configuration where possible
+- Explicit rather than implicit behavior
+
+### **Principle 4: Transparency to Clients**
+
+- MCP protocol compliance - clients don't know it's a proxy
+- Error messages preserve backend server context
+- No protocol modifications or extensions
+
+## 🔄 Decision Framework
+
+When evaluating new features or changes, ask:
+
+### **Reliability Questions**
+
+- Does this reduce system availability?
+- What happens if this component fails?
+- Can the system continue operating without it?
+
+### **Security Questions**
+
+- Does this expand the attack surface?
+- Could this leak sensitive information?
+- Are we maintaining defense in depth?
+
+### **Simplicity Questions**
+
+- Does this add configuration complexity?
+- Will this make deployment harder?
+- Can we solve this with existing patterns?
+
+### **Compatibility Questions**
+
+- Does this break MCP protocol compliance?
+- Will existing clients continue to work?
+- Are we preserving backend server interfaces?
+
+## 📊 Quality Attribute Scenarios
+
+### **Reliability Scenario**
+
+- **Situation**: Backend MCP server crashes during request processing
+- **Response**: System detects failure, marks server unavailable, retries request on other servers if applicable
+- **Measure**: <5 second recovery, client receives appropriate error, system remains available
+- **Current**: Connection pooling with health checks, exponential backoff retry
+
+### **Security Scenario**
+
+- **Situation**: Client attempts to access MCP server without proper authorization
+- **Response**: OAuth token validation, scope checking, request denied with 403
+- **Measure**: Zero unauthorized access, all attempts logged with client context
+- **Current**: OAuth 2.1 with scope-based authorization, session management
+
+### **Performance Scenario**
+
+- **Situation**: Multiple concurrent clients making requests to backend servers
+- **Response**: Efficient request forwarding, proper error handling, async processing
+- **Measure**: Reliable request processing, system remains responsive
+- **Current**: Express.js with proper error handling, async request forwarding
+
+### **Maintainability Scenario**
+
+- **Situation**: New MCP server added to configuration file
+- **Response**: Hot reload detects change, spawns new server process, updates routing
+- **Measure**: <30 seconds to become available, zero downtime
+- **Current**: File system watching with debounced reload, graceful process management
+
+## 🚫 System Boundaries & Anti-Patterns
+
+### **What We Are**
+
+- **MCP Protocol Proxy**: Faithful implementation of MCP specification
+- **Authentication Gateway**: OAuth 2.1 security layer
+- **Connection Multiplexer**: Many clients to many servers
+- **Process Manager**: Lifecycle management for backend servers
+
+### **What We Are NOT**
+
+- **Business Logic Engine**: No data transformation or business rules
+- **Caching Layer**: Every request goes to backend (for now)
+- **Service Mesh**: Not a general-purpose service communication layer
+- **Database**: No persistent storage of application data
+
+### **Integration Boundaries**
+
+```mermaid
+graph TB
+    subgraph "North Bound (Clients)"
+        NB[HTTP/SSE + OAuth<br/>MCP Protocol Only]
+    end
+
+    subgraph "1MCP Core"
+        C[Proxy Logic]
+    end
+
+    subgraph "South Bound (Backends)"
+        SB[stdio processes<br/>No network access]
+    end
+
+    subgraph "East/West (Peers)"
+        EW[No service-to-service<br/>communication]
+    end
+
+    NB --> C
+    C --> SB
+    C -.- EW
+```
+
+### **Anti-Patterns We Avoid**
+
+- **Shared Database**: No shared state between instances
+- **Network Dependencies**: No calls to external services at runtime
+- **Protocol Extensions**: No MCP protocol modifications
+- **Synchronous Chains**: No blocking calls in request path
+- **Global State**: All state is request-scoped or configuration
+
+## 🗺️ Evolution Strategy
+
+### **Phase 1: Single Instance Proxy** (Current)
+
+- **Scope**: One 1MCP instance per deployment
+- **Features**: HTTP/SSE transport, OAuth, basic connection pooling
+- **Constraints**: No horizontal scaling, local configuration only
+
+### **Phase 2: Enhanced Features** (Future)
+
+- **Scope**: Additional operational features based on user feedback
+- **Features**: Enhanced monitoring, advanced configuration options
+- **Migration**: Backward compatible, optional enhancements
+
+### **Phase 3: Advanced Capabilities** (Future)
+
+- **Scope**: Advanced features for enterprise use cases
+- **Features**: Enhanced security, operational improvements
+- **Migration**: Configuration extensions, no protocol changes
+
+### **Evolution Principles**
+
+- **Backward Compatibility**: Existing deployments continue working
+- **Progressive Enhancement**: New features are opt-in
+- **Zero Downtime**: All migrations support hot upgrades
+- **Configuration Driven**: Features enabled through configuration
+
+## ⚡ Architecture Validation
+
+### **Automated Architecture Testing**
+
+```typescript
+// Example: Architecture tests enforce our boundaries
+describe('Architecture Constraints', () => {
+  test('No business logic in transport layer', () => {
+    // Static analysis ensures transport only handles HTTP/auth
+  });
+
+  test('All external calls use circuit breakers', () => {
+    // Validate resilience patterns are used
+  });
+
+  test('No direct database access outside repositories', () => {
+    // Enforce data access patterns
+  });
+});
+```
+
+### **Architecture Metrics**
+
+- **Dependency Violations**: 0 (enforced by tests)
+- **Cyclomatic Complexity**: <10 per function (linting)
+- **Security Scan**: 0 high/critical vulnerabilities
+- **API Compatibility**: 100% MCP protocol compliance
+- **Test Coverage**: >90% for critical paths
+
+### **Continuous Validation**
+
+- Architecture tests run in CI/CD pipeline
+- Dependency analysis in pull requests
+- Security scanning on every build
+- Performance regression testing
+
+## 🔍 Observability & Monitoring
+
+### **Health Indicators**
+
+- **System Health**: All core components operational
+- **Backend Health**: Individual MCP server status
+- **Connection Health**: Client connection pool status
+- **Configuration Health**: Config file validity and reload status
+
+### **Key Metrics**
+
+- **Availability**: System uptime percentage
+- **Latency**: Request response time distribution
+- **Throughput**: Requests per second capacity
+- **Error Rate**: Failed requests percentage
+- **Resource Usage**: Memory, CPU, connection counts
+
+### **Monitoring Indicators**
+
+- **Critical**: System unavailable, authentication failures, configuration errors
+- **Warning**: Backend server disconnections, repeated request failures
+- **Info**: Configuration reloaded, new client connections, successful operations
+
+## 🚨 Failure Modes & Recovery
+
+### **Failure Categories**
+
+#### **Backend Server Failures**
+
+- **Symptoms**: Process crash, unresponsive, invalid responses
+- **Detection**: Health checks, request timeouts, error patterns
+- **Recovery**: Process restart, connection retry, graceful degradation
+- **Escalation**: Remove from rotation, alert operators
+
+#### **Configuration Failures**
+
+- **Symptoms**: Invalid JSON, missing servers, permission errors
+- **Detection**: File parsing errors, validation failures
+- **Recovery**: Retain previous valid configuration, log errors
+- **Escalation**: Disable hot-reload, require manual intervention
+
+#### **Resource Exhaustion**
+
+- **Symptoms**: High memory usage, connection limits hit, slow responses
+- **Detection**: Resource monitoring, performance degradation
+- **Recovery**: Connection throttling, graceful degradation, load shedding
+- **Escalation**: Service restart, horizontal scaling
+
+#### **Security Breaches**
+
+- **Symptoms**: Authentication bypass, unauthorized access, token leakage
+- **Detection**: Security monitoring, anomaly detection, audit logs
+- **Recovery**: Immediate service isolation, token revocation, forensic analysis
+- **Escalation**: Complete service shutdown, incident response procedures
+
+### **Recovery Expectations**
+
+- **Backend Reconnection**: Automatic with retry logic
+- **Configuration Reload**: Immediate detection and application
+- **Security Incident**: Immediate authentication failure response
+- **System Recovery**: Restart and reload as needed
+
+---
+
+> **This architecture serves as our decision-making framework. When in doubt, refer back to our principles and constraints. All changes should strengthen these foundations, not weaken them.**
+
+
+=== ./../mcps/agent/docs/reference/feature-comparison.md ===
+# 1MCP vs Alternatives: Why Choose 1MCP?
+
+> **🎯 Objective Comparison**: We believe in making informed decisions. Here's how 1MCP compares to other approaches for managing multiple MCP servers, with honest pros and cons for each option.
+
+## 🗺️ Your Options Landscape
+
+```mermaid
+graph TB
+    Problem[Multiple MCP Servers to Manage]
+
+    Problem --> Option1[Direct MCP Connections]
+    Problem --> Option2[Custom Proxy Solution]
+    Problem --> Option3[1MCP Universal Proxy]
+    Problem --> Option4[Cloud MCP Services]
+
+    Option1 --> O1Pro[Simple, Direct]
+    Option1 --> O1Con[Complex Management]
+
+    Option2 --> O2Pro[Full Control]
+    Option2 --> O2Con[Development Time]
+
+    Option3 --> O3Pro[Best of Both]
+    Option3 --> O3Con[New Dependency]
+
+    Option4 --> O4Pro[Managed Service]
+    Option4 --> O4Con[Vendor Lock-in]
+```
+
+---
+
+## 🔗 Option 1: Direct MCP Connections
+
+### **What It Is**
+
+Connect your AI assistant directly to each MCP server individually, managing each connection separately.
+
+### **When It Makes Sense**
+
+- **1-2 MCP servers only** - Simple setup, minimal overhead
+- **Proof of concept** - Testing MCP capabilities before scaling
+- **Single developer** - Personal use with full control
+- **Learning MCP protocol** - Understanding the fundamentals
+
+### **Detailed Comparison**
+
+| Aspect                    | Direct MCP                | 1MCP Proxy              | Winner        |
+| ------------------------- | ------------------------- | ----------------------- | ------------- |
+| **Initial Setup**         | Simple (1-2 servers)      | Moderate                | Direct MCP 📊 |
+| **Scaling Complexity**    | Exponential growth        | Linear growth           | 1MCP 🚀       |
+| **Connection Management** | Manual per server         | Centralized handling    | 1MCP ⚡       |
+| **Health Monitoring**     | Per-server checking       | Unified dashboard       | 1MCP 📊       |
+| **Authentication**        | Per-server credentials    | Centralized OAuth       | 1MCP 🔒       |
+| **Configuration Changes** | Restart each server       | Hot reload              | 1MCP 🔄       |
+| **Failure Recovery**      | Manual intervention       | Automatic retry         | 1MCP 🛡️       |
+| **Resource Usage**        | High (multiple processes) | Moderate (single proxy) | 1MCP ⚡       |
+
+### **Real-World Scenario: 10 MCP Servers**
+
+**Direct MCP Setup**:
+
+```bash
+# Claude Desktop configuration
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": ["mcp-filesystem"],
+      "args": ["/data"]
+    },
+    "database": {
+      "command": ["python", "/path/to/db-server.py"]
+    },
+    "web-scraper": {
+      "command": ["node", "/path/to/web.js"]
+    }
+    // ... repeat for 7 more servers
+  }
+}
+
+# Daily maintenance:
+# 1. Check if all 10 servers are running
+ps aux | grep mcp | wc -l  # Should be 10, often 7-9
+
+# 2. Restart failed servers individually
+pkill -f "mcp-filesystem" && mcp-filesystem /data &
+pkill -f "db-server.py" && python /path/to/db-server.py &
+
+# 3. Update Claude Desktop config for any changes
+# 4. Restart Claude Desktop to pick up changes
+```
+
+**Time Investment**:
+
+- **Daily monitoring**: 10 servers × 2 minutes = 20 minutes
+- **Weekly troubleshooting**: 10 servers × 15 minutes = 2.5 hours
+- **Monthly updates**: 10 servers × 30 minutes = 5 hours
+- **Total**: 15+ hours/month of maintenance
+
+**1MCP Equivalent**:
+
+```bash
+# Single configuration file
+{
+  "mcpServers": {
+    "filesystem": { "command": ["mcp-filesystem", "/data"] },
+    "database": { "command": ["python", "/path/to/db-server.py"] },
+    "web-scraper": { "command": ["node", "/path/to/web.js"] }
+    // ... 7 more servers
+  }
+}
+
+# Daily maintenance:
+# Check logs and server status through application monitoring
+
+# Total maintenance: 5 minutes/month
+```
+
+### **Pros of Direct MCP**
+
+✅ **Simplicity**: No additional components to manage
+✅ **Direct Control**: Full control over each server individually
+✅ **No Dependencies**: No proxy layer to potentially fail
+✅ **Learning**: Better understanding of MCP protocol
+✅ **Debugging**: Direct access to server logs and diagnostics
+
+### **Cons of Direct MCP**
+
+❌ **Exponential Complexity**: Each new server adds significant overhead
+❌ **No Health Monitoring**: Must check each server individually
+❌ **Connection Overhead**: New connections for every request
+❌ **No Authentication**: Security managed per-server or not at all
+❌ **Manual Recovery**: Server failures require manual intervention
+❌ **Configuration Fragmentation**: Updates require multiple file changes
+
+### **Bottom Line**
+
+**Choose Direct MCP if**: You have 1-2 servers, are learning MCP, or need maximum control with minimal dependencies.
+
+**Switch to 1MCP when**: You have 3+ servers, want reliability, or need team access.
+
+---
+
+## 🔧 Option 2: Custom Proxy Solution
+
+### **What It Is**
+
+Build your own proxy/aggregation layer using frameworks like Express.js, FastAPI, or Go to manage multiple MCP servers.
+
+### **When It Makes Sense**
+
+- **Unique Requirements**: Very specific business logic or protocol needs
+- **Existing Infrastructure**: Already have proxy frameworks and expertise
+- **Full Control**: Need complete control over every aspect of the proxy
+- **Learning Exercise**: Building MCP expertise and custom solutions
+
+### **Development Reality Check**
+
+**Minimum Viable Custom Proxy** (3-6 months):
+
+```typescript
+// Basic proxy server (simplified)
+class CustomMCPProxy {
+  private servers: Map<string, MCPConnection> = new Map();
+
+  async initialize() {
+    // 1. Connection management (2-3 weeks)
+    // 2. Request routing (1-2 weeks)
+    // 3. Error handling (2-3 weeks)
+    // 4. Basic health checks (1 week)
+    // 5. Configuration management (1-2 weeks)
+  }
+
+  async handleRequest(request: MCPRequest) {
+    // Route to appropriate server
+    // Handle failures and retries
+    // Aggregate responses if needed
+    // Return formatted response
+  }
+}
+
+// Missing enterprise features:
+// - Authentication (OAuth 2.1): +4-6 weeks
+// - Request handling optimization: +2-3 weeks
+// - Hot reload: +1-2 weeks
+// - Monitoring/metrics: +3-4 weeks
+// - Multi-instance deployment: +4-6 weeks
+// - Comprehensive testing: +4-8 weeks
+```
+
+### **Detailed Comparison**
+
+| Aspect                   | Custom Proxy                | 1MCP                    | Winner          |
+| ------------------------ | --------------------------- | ----------------------- | --------------- |
+| **Development Time**     | 3-12 months                 | 5 minutes               | 1MCP ⚡         |
+| **Initial Cost**         | $50K-$200K+                 | $0                      | 1MCP 💰         |
+| **Ongoing Maintenance**  | High (your team)            | None (community)        | 1MCP 🔧         |
+| **Feature Completeness** | Depends on time/budget      | Production-ready        | 1MCP ✅         |
+| **MCP Compliance**       | Risk of protocol violations | Guaranteed compliance   | 1MCP 📋         |
+| **Security Features**    | DIY implementation          | Battle-tested OAuth 2.1 | 1MCP 🔒         |
+| **Performance**          | Depends on expertise        | Standard                | Tie ⚖️          |
+| **Customization**        | Unlimited                   | Configurable            | Custom Proxy 🎨 |
+| **Control**              | Complete                    | High                    | Custom Proxy 🎛️ |
+| **Support**              | Internal team only          | Community + docs        | 1MCP 🆘         |
+
+### **Real Development Timeline**
+
+**Phase 1: Basic Proxy (Month 1-2)**
+
+```
+Week 1-2: Project setup, basic routing
+Week 3-4: MCP protocol implementation
+Week 5-6: Error handling, basic retry logic
+Week 7-8: Configuration management, testing
+```
+
+**Phase 2: Production Features (Month 3-6)**
+
+```
+Week 9-12: Authentication system (OAuth)
+Week 13-16: Request handling and error recovery
+Week 17-20: Health monitoring and metrics
+Week 21-24: High availability and deployment
+```
+
+**Phase 3: Enterprise Features (Month 7-12)**
+
+```
+Week 25-32: Advanced security, audit logging
+Week 33-40: Multi-instance deployment
+Week 41-48: Comprehensive monitoring, alerting
+Week 49-52: Documentation, team training
+```
+
+**Total Investment**: $150K-$300K (depending on team size and feature scope)
+
+### **Hidden Costs of Custom Development**
+
+```
+Development Costs:
+├── Senior Developer (12 months): $150K
+├── DevOps Engineer (6 months): $75K
+├── Security Review: $25K
+├── Testing & QA: $30K
+├── Documentation: $15K
+└── Total: $295K first year
+
+Ongoing Costs:
+├── Maintenance (20% dev time): $30K/year
+├── Security updates: $15K/year
+├── Feature additions: $40K/year
+├── Support & documentation: $10K/year
+└── Total: $95K/year ongoing
+```
+
+### **What You Get vs 1MCP**
+
+**Custom Proxy Advantages**:
+
+```typescript
+// You CAN build exactly what you need:
+class MyCustomProxy {
+  // Unlimited customization
+  async handleSpecialBusinessLogic() {
+    // Your unique requirements here
+  }
+
+  // Custom protocols
+  async handleLegacyProtocol() {
+    // Support for non-standard systems
+  }
+
+  // Proprietary integrations
+  async integrateWithInternalSystems() {
+    // Company-specific integrations
+  }
+}
+```
+
+**1MCP Equivalent** (5 minutes setup):
+
+```json
+{
+  "mcpServers": {
+    "your-servers": "standard MCP configuration"
+  }
+}
+```
+
+### **Pros of Custom Proxy**
+
+✅ **Unlimited Customization**: Build exactly what you need
+✅ **Full Control**: Complete ownership of codebase and decisions
+✅ **Internal Expertise**: Team learns MCP protocol deeply
+✅ **Integration Flexibility**: Can integrate with any internal system
+✅ **No External Dependencies**: Complete self-reliance
+
+### **Cons of Custom Proxy**
+
+❌ **High Development Cost**: $150K-$300K initial investment
+❌ **Long Time to Market**: 3-12 months to production-ready
+❌ **Ongoing Maintenance**: Permanent team responsibility
+❌ **Security Risk**: DIY security vs battle-tested solutions
+❌ **Feature Gap**: Missing enterprise features for months/years
+❌ **Opportunity Cost**: Resources not spent on core business features
+
+### **Bottom Line**
+
+**Choose Custom Proxy if**: You have unique requirements that no existing solution can meet, have 6+ months for development, and budget $200K+ for the project.
+
+**Choose 1MCP if**: You want to solve MCP aggregation quickly and focus resources on your core business features.
+
+---
+
+## ☁️ Option 3: Cloud MCP Services
+
+### **What It Is**
+
+Managed MCP proxy services offered by cloud providers or specialized vendors (hypothetical, as this market is emerging).
+
+### **When It Makes Sense**
+
+- **Zero Maintenance**: Want completely managed infrastructure
+- **Enterprise SLAs**: Need vendor-backed uptime guarantees
+- **Unlimited Scale**: Handling massive enterprise deployments
+- **Compliance Requirements**: Need vendor certifications (SOC 2, GDPR, etc.)
+
+### **Theoretical Comparison**
+
+| Aspect              | Cloud MCP Service           | 1MCP                 | Winner           |
+| ------------------- | --------------------------- | -------------------- | ---------------- |
+| **Setup Time**      | 5-15 minutes                | 5 minutes            | Tie ⚖️           |
+| **Maintenance**     | Zero                        | Minimal              | Cloud Service 🔧 |
+| **Cost**            | $500-$5000/month            | $0                   | 1MCP 💰          |
+| **Customization**   | Limited to service features | High configurability | 1MCP 🎨          |
+| **Data Control**    | Third-party servers         | Your infrastructure  | 1MCP 🔒          |
+| **Vendor Lock-in**  | High risk                   | None                 | 1MCP 🔓          |
+| **SLA Guarantees**  | 99.9%+ with credits         | Self-managed         | Cloud Service 📋 |
+| **Compliance**      | Vendor certifications       | Self-certification   | Cloud Service ✅ |
+| **Global Scale**    | Automatic                   | Manual setup         | Cloud Service 🌍 |
+| **Feature Updates** | Automatic                   | Manual upgrade       | Cloud Service 🔄 |
+
+### **Cost Analysis Example**
+
+**Cloud MCP Service** (estimated pricing):
+
+```
+Pricing Tiers:
+├── Starter: $99/month (10 servers, 1M requests)
+├── Professional: $499/month (50 servers, 10M requests)
+├── Enterprise: $2,499/month (unlimited servers, 100M requests)
+└── Custom: $5,000+/month (dedicated infrastructure)
+
+Annual Cost: $1,200 - $60,000+
+```
+
+**1MCP Self-Hosted**:
+
+```
+Infrastructure Costs:
+├── Small deployment: $50-100/month (cloud VM)
+├── Medium deployment: $200-500/month (HA setup)
+├── Large deployment: $1,000-2,000/month (multi-region)
+└── Maintenance: Your team or consultant
+
+Total Annual Cost: $600 - $24,000 (infrastructure only)
+```
+
+**Cost Comparison** (5 years):
+
+```
+                Year 1    Year 3    Year 5    Total
+Cloud Service   $30K      $32K      $35K      $161K
+1MCP Hosted     $6K       $8K       $10K      $39K
+Savings         $24K      $24K      $25K      $122K
+```
+
+### **Pros of Cloud MCP Services**
+
+✅ **Zero Maintenance**: Completely managed infrastructure
+✅ **Enterprise SLAs**: Vendor-backed uptime guarantees
+✅ **Automatic Scaling**: Handle traffic spikes automatically
+✅ **Compliance**: Vendor certifications and audit support
+✅ **Global Infrastructure**: Multi-region deployment included
+✅ **24/7 Support**: Professional support teams
+
+### **Cons of Cloud MCP Services**
+
+❌ **High Cost**: $1,200-$60,000+ annually vs $0 for 1MCP
+❌ **Vendor Lock-in**: Difficult to migrate away from service
+❌ **Data Privacy**: Your MCP traffic flows through third-party servers
+❌ **Limited Customization**: Restricted to vendor's feature set
+❌ **Service Risk**: Vendor could discontinue service or change terms
+❌ **Network Latency**: Additional hop through vendor infrastructure
+
+### **Bottom Line**
+
+**Choose Cloud MCP if**: Cost is not a concern, you need zero maintenance, and vendor SLAs are required for compliance.
+
+**Choose 1MCP if**: You want control over your infrastructure, need customization, or want to minimize costs.
+
+---
+
+## 🏆 1MCP: The Best of All Worlds
+
+### **Why 1MCP Exists**
+
+We built 1MCP because each alternative has significant drawbacks:
+
+- **Direct MCP**: Doesn't scale beyond 2-3 servers
+- **Custom Proxy**: Takes 6+ months and $200K+ to build properly
+- **Cloud Services**: Expensive, vendor lock-in, limited control
+
+1MCP provides enterprise-grade features immediately, at zero cost, with full control.
+
+### **1MCP's Unique Position**
+
+```mermaid
+graph TB
+    subgraph "Complexity vs Control"
+        A[Direct MCP<br/>High Control<br/>High Complexity]
+        B[1MCP<br/>High Control<br/>Low Complexity]
+        C[Cloud Service<br/>Low Control<br/>Low Complexity]
+        D[Custom Proxy<br/>Highest Control<br/>Highest Complexity]
+    end
+
+    A --> B
+    C --> B
+    D --> B
+
+    B --> Sweet[Sweet Spot<br/>🎯]
+```
+
+### **Feature Completeness Comparison**
+
+| Feature                  | Direct MCP          | Custom Proxy | Cloud Service | 1MCP         |
+| ------------------------ | ------------------- | ------------ | ------------- | ------------ |
+| **MCP Aggregation**      | ❌ Manual           | ✅ Custom    | ✅ Managed    | ✅ Built-in  |
+| **Health Monitoring**    | ❌ None             | 🔧 DIY       | ✅ Included   | ✅ Built-in  |
+| **Authentication**       | ❌ Per-server       | 🔧 DIY       | ✅ Included   | ✅ OAuth 2.1 |
+| **Hot Reload**           | ❌ Restart required | 🔧 DIY       | ✅ Included   | ✅ Built-in  |
+| **Connection Pooling**   | ❌ None             | 🔧 DIY       | ✅ Included   | ✅ Built-in  |
+| **Rate Limiting**        | ❌ None             | 🔧 DIY       | ✅ Included   | ✅ Built-in  |
+| **Multi-Instance**       | ❌ None             | 🔧 DIY       | ✅ Included   | ✅ Built-in  |
+| **Audit Logging**        | ❌ None             | 🔧 DIY       | ✅ Included   | ✅ Built-in  |
+| **Basic Monitoring**     | ❌ None             | 🔧 DIY       | ✅ Included   | ✅ Built-in  |
+| **Custom Configuration** | ✅ Full             | ✅ Unlimited | ❌ Limited    | ✅ Extensive |
+| **Data Control**         | ✅ Full             | ✅ Full      | ❌ Vendor     | ✅ Full      |
+| **Cost**                 | $0                  | $200K+       | $30K+/year    | $0           |
+| **Time to Production**   | Immediate           | 6+ months    | 1 week        | 5 minutes    |
+
+**Legend**: ✅ Included | 🔧 Build yourself | ❌ Not available
+
+---
+
+## 🎯 Decision Framework
+
+### **Choose Direct MCP if**:
+
+- [ ] You have 1-2 MCP servers maximum
+- [ ] You're learning MCP protocol
+- [ ] You're doing proof-of-concept work
+- [ ] You need maximum control and minimal dependencies
+- [ ] Setup simplicity is more important than scaling
+
+### **Choose Custom Proxy if**:
+
+- [ ] You have very unique business requirements no existing solution meets
+- [ ] You have $200K+ budget and 6+ months timeline
+- [ ] You have experienced development team for ongoing maintenance
+- [ ] You need unlimited customization capabilities
+- [ ] Control is more important than time/cost
+
+### **Choose Cloud MCP if**:
+
+- [ ] Budget is not a constraint ($30K+/year is acceptable)
+- [ ] You need zero maintenance and vendor SLAs
+- [ ] Compliance requires vendor certifications
+- [ ] You're handling massive enterprise scale (1000+ developers)
+- [ ] Data privacy concerns are minimal
+
+### **Choose 1MCP if**:
+
+- [ ] You have 3+ MCP servers to manage
+- [ ] You want production-ready features immediately
+- [ ] You need enterprise capabilities at zero cost
+- [ ] You want control over your infrastructure
+- [ ] You need to be productive quickly (5-minute setup)
+- [ ] You want to avoid vendor lock-in
+- [ ] Your focus should be on your core business, not MCP infrastructure
+
+---
+
+## 🚀 Migration Paths
+
+### **From Direct MCP to 1MCP**
+
+```bash
+# 1. Export your existing MCP server configurations
+# 2. Convert to 1MCP format (5 minutes)
+# 3. Test with 1MCP in parallel
+# 4. Switch your AI client to 1MCP endpoint
+# 5. Decommission individual servers
+
+# Migration time: 30 minutes
+# Risk: Low (parallel testing)
+# Rollback: Immediate (switch back to direct)
+```
+
+### **From Custom Proxy to 1MCP**
+
+```bash
+# 1. Document your custom features and requirements
+# 2. Configure 1MCP with equivalent settings
+# 3. Run 1MCP in parallel with custom proxy
+# 4. Migrate clients gradually to 1MCP
+# 5. Decommission custom proxy once validated
+
+# Migration time: 1-2 weeks (validation and testing)
+# Risk: Medium (feature parity verification)
+# Benefit: Eliminate maintenance burden, gain new features
+```
+
+### **From Cloud Service to 1MCP**
+
+```bash
+# 1. Export configuration from cloud service
+# 2. Set up 1MCP on your infrastructure
+# 3. Test feature parity and functionality
+# 4. Migrate during maintenance window
+# 5. Cancel cloud service subscription
+
+# Migration time: 1 week (infrastructure setup)
+# Risk: Low (similar feature set)
+# Benefit: Eliminate ongoing costs, gain control
+```
+
+---
+
+## 🎯 The Bottom Line
+
+### **For Most Users, 1MCP is the Clear Choice Because**:
+
+1. **⚡ Immediate Value**: Production-ready in 5 minutes vs months of development
+2. **💰 Zero Cost**: No licensing, subscription, or development costs
+3. **🛡️ Enterprise Features**: OAuth, audit logging, multi-instance deployment included
+4. **🔧 Full Control**: Deploy on your infrastructure, customize as needed
+5. **🚫 No Lock-in**: Open source, migrate away anytime
+6. **📈 Proven Scale**: From single developer to Fortune 500 enterprise
+7. **🔒 Security First**: Battle-tested authentication and security features
+8. **📊 Production Ready**: Health checks, logging, and reliable operation
+
+### **When You Might Choose Alternatives**:
+
+- **Direct MCP**: You have 1-2 servers and extreme simplicity needs
+- **Custom Proxy**: You have unique requirements and $200K+ budget
+- **Cloud Service**: You have unlimited budget and zero maintenance requirements
+
+### **Most Common Decision Path**:
+
+```
+Start → Direct MCP (1-2 servers) → 1MCP (3+ servers) → Stay with 1MCP (scales to enterprise)
+```
+
+---
+
+> **🎯 Ready to Make the Switch?**
+>
+> **Try 1MCP risk-free**: [5-minute setup guide](/guide/getting-started)
+>
+> Still unsure? [Join our community](https://github.com/1mcp-app/agent/discussions) to discuss your specific requirements with other users who've made the switch.
+
+
+=== ./../mcps/agent/docs/reference/trust-proxy.md ===
+# Trust Proxy Configuration
+
+When running 1MCP behind a reverse proxy (nginx, Apache, Cloudflare, etc.), you need to configure trust proxy settings to ensure proper client IP detection for logging, rate limiting, and security features.
+
+## Trust Proxy Options
+
+| Value         | Description                                                              | Example                     |
+| ------------- | ------------------------------------------------------------------------ | --------------------------- |
+| `false`       | Disable trust proxy (default Express.js behavior)                        | `--trust-proxy=false`       |
+| `true`        | Trust all proxies (use leftmost IP from X-Forwarded-For)                 | `--trust-proxy=true`        |
+| `loopback`    | Trust loopback addresses (127.0.0.1, ::1) - **Default**                  | `--trust-proxy=loopback`    |
+| `linklocal`   | Trust link-local addresses (169.254.0.0/16, fe80::/10)                   | `--trust-proxy=linklocal`   |
+| `uniquelocal` | Trust unique local addresses (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) | `--trust-proxy=uniquelocal` |
+| IP Address    | Trust specific IP address                                                | `--trust-proxy=192.168.1.1` |
+| CIDR Range    | Trust IP range in CIDR notation                                          | `--trust-proxy=10.0.0.0/8`  |
+
+## Common Use Cases
+
+### Local Development (Default)
+
+```bash
+# Default - trusts loopback addresses (safe for local development)
+npx -y @1mcp/agent
+
+# Equivalent explicit setting
+npx -y @1mcp/agent --trust-proxy=loopback
+```
+
+### Behind nginx/Apache
+
+```bash
+# Trust your reverse proxy server
+npx -y @1mcp/agent --trust-proxy=192.168.1.100
+
+# Or trust your entire internal network
+npx -y @1mcp/agent --trust-proxy=192.168.0.0/16
+```
+
+### Behind Cloudflare/CDN
+
+```bash
+# Trust all proxies (common for CDN setups)
+npx -y @1mcp/agent --trust-proxy=true
+```
+
+### Docker with Host Network
+
+```bash
+# Trust unique local addresses for container networking
+docker run --network host \
+  -e ONE_MCP_TRUST_PROXY=uniquelocal \
+  ghcr.io/1mcp-app/agent
+```
+
+### Environment Variables
+
+You can also use environment variables instead of CLI flags:
+
+```bash
+# Set via environment variable
+export ONE_MCP_TRUST_PROXY=192.168.1.0/24
+npx -y @1mcp/agent
+
+# Docker with environment variable
+docker run -p 3050:3050 \
+  -e ONE_MCP_TRUST_PROXY=true \
+  ghcr.io/1mcp-app/agent
+```
+
+## Security Considerations
+
+- **Default**: `loopback` is safe for local development
+- **Production**: Use specific IP addresses or CIDR ranges when possible
+- **CDN**: Only use `true` when behind trusted CDN services
+- **Headers**: Trust proxy settings affect `X-Forwarded-For` header processing
+
+**⚠️ Important**: Incorrect trust proxy settings can lead to IP spoofing vulnerabilities. Only trust proxies you control.
+
+## How Trust Proxy Works
+
+When trust proxy is enabled, Express.js will:
+
+1. **Parse `X-Forwarded-For` headers** to extract the original client IP
+2. **Update `req.ip`** to reflect the actual client IP (not the proxy IP)
+3. **Populate `req.ips`** array with all IPs in the forwarding chain
+4. **Enable secure cookies** when `X-Forwarded-Proto: https` is present
+
+### Example Headers
+
+Without trust proxy:
+
+```http
+X-Forwarded-For: 203.0.113.1, 192.168.1.100
+req.ip = "192.168.1.100"  // Proxy IP
+req.ips = []
+```
+
+With trust proxy enabled:
+
+```http
+X-Forwarded-For: 203.0.113.1, 192.168.1.100
+req.ip = "203.0.113.1"    // Original client IP
+req.ips = ["203.0.113.1", "192.168.1.100"]
+```
+
+## Reverse Proxy Configuration Examples
+
+### nginx
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:3050;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+Then configure 1MCP:
+
+```bash
+npx -y @1mcp/agent --trust-proxy=127.0.0.1
+```
+
+### Apache
+
+```apache
+<VirtualHost *:80>
+    ServerName your-domain.com
+
+    ProxyPass / http://localhost:3050/
+    ProxyPassReverse / http://localhost:3050/
+    ProxyPreserveHost On
+
+    # Set forwarded headers
+    ProxyAddHeaders On
+</VirtualHost>
+```
+
+Then configure 1MCP:
+
+```bash
+npx -y @1mcp/agent --trust-proxy=127.0.0.1
+```
+
+## Troubleshooting
+
+### Check Current Configuration
+
+The server logs will show the trust proxy setting on startup:
+
+```
+Server is running on port 3050 with HTTP/SSE transport
+```
+
+### Test Client IP Detection
+
+You can test if trust proxy is working correctly by checking the logs for incoming requests. The client IP should reflect the actual client, not the proxy.
+
+### Common Issues
+
+1. **Wrong client IP in logs**: Trust proxy not configured or incorrect proxy IP
+2. **IP spoofing warnings**: Trust proxy is too permissive (using `true` when you should use specific IPs)
+3. **Rate limiting not working**: Client IPs not detected correctly due to trust proxy misconfiguration
+
+For more detailed troubleshooting, enable debug logging and check the request headers being processed.
+
+
+=== ./../mcps/agent/docs/reference/health-check.md ===
+# Health Check API Reference
+
+The 1MCP Agent provides comprehensive health check endpoints for monitoring system status, server connectivity, and operational metrics.
+
+## Overview
+
+Health check endpoints are designed for:
+
+- **Load Balancers**: HAProxy, nginx, AWS ALB
+- **Container Orchestration**: Kubernetes, Docker Swarm
+- **CI/CD Pipelines**: Deployment validation
+- **Manual Debugging**: System status inspection
+
+## Security Configuration
+
+The health endpoints include configurable security features to control information exposure:
+
+**Detail Levels**:
+
+- **`full`**: Complete system information with error sanitization
+- **`basic`**: Limited system details, sanitized errors, server status
+- **`minimal`** (default): Only essential status information, no sensitive details
+
+**Configuration**:
+
+```bash
+# CLI option (default is minimal)
+npx -y @1mcp/agent --config mcp.json --health-info-level basic
+
+# Environment variable
+export ONE_MCP_HEALTH_INFO_LEVEL=basic
+npx -y @1mcp/agent --config mcp.json
+```
+
+**Sanitization Features**:
+
+- Automatic error message sanitization
+- Credential pattern removal (user:password@, tokens, keys)
+- URL and file path redaction
+- IP address anonymization
+
+## Endpoints
+
+### `GET /health`
+
+**Description**: Complete health status with detailed system metrics and server information.
+
+**Authentication**: None required
+
+**Response Codes**:
+
+- `200` - Healthy or degraded but functional
+- `503` - Unhealthy, critical issues
+- `500` - Internal server error
+
+**Response Headers**:
+
+```http
+Content-Type: application/json
+Cache-Control: no-cache, no-store, must-revalidate
+X-Health-Status: healthy|degraded|unhealthy
+X-Service-Version: 0.15.0
+X-Uptime-Seconds: 3600
+```
+
+**Response Schema**:
+
+```json
+{
+  "status": "healthy|degraded|unhealthy",
+  "timestamp": "2025-01-30T12:00:00.000Z",
+  "version": "0.15.0",
+  "system": {
+    "uptime": 3600,
+    "memory": {
+      "used": 50.5,
+      "total": 100.0,
+      "percentage": 50.5
+    },
+    "process": {
+      "pid": 12345,
+      "nodeVersion": "v20.0.0",
+      "platform": "linux",
+      "arch": "x64"
+    }
+  },
+  "servers": {
+    "total": 3,
+    "healthy": 2,
+    "unhealthy": 1,
+    "details": [
+      {
+        "name": "filesystem-server",
+        "status": "connected|error|disconnected|awaiting_oauth",
+        "healthy": true,
+        "lastConnected": "2025-01-30T11:30:00.000Z",
+        "lastError": "Connection timeout",
+        "tags": ["filesystem", "local"]
+      }
+    ]
+  },
+  "configuration": {
+    "loaded": true,
+    "serverCount": 3,
+    "enabledCount": 2,
+    "disabledCount": 1,
+    "authEnabled": true,
+    "transport": "http"
+  }
+}
+```
+
+**Field Descriptions**:
+
+- **`status`**: Overall health status
+  - `healthy` - All systems operational
+  - `degraded` - Some issues but still functional
+  - `unhealthy` - Critical issues affecting functionality
+
+- **`system.uptime`**: Server uptime in seconds
+- **`system.memory.used`**: Heap memory used in MB
+- **`system.memory.total`**: Total heap memory in MB
+- **`system.memory.percentage`**: Memory usage percentage
+
+- **`servers.details[].status`**: Individual server status
+  - `connected` - Server is connected and operational
+  - `error` - Server has connection or runtime errors
+  - `disconnected` - Server is not connected
+  - `awaiting_oauth` - Server requires OAuth authentication
+
+### `GET /health/live`
+
+**Description**: Simple liveness probe for basic availability checking.
+
+**Authentication**: None required
+
+**Response Codes**:
+
+- `200` - Server is running (always returns 200 if reachable)
+
+**Response Schema**:
+
+```json
+{
+  "status": "alive",
+  "timestamp": "2025-01-30T12:00:00.000Z"
+}
+```
+
+**Use Cases**:
+
+- Kubernetes liveness probes
+- Load balancer basic health checks
+- Service discovery health checks
+
+### `GET /health/ready`
+
+**Description**: Readiness probe to determine if the service is ready to accept requests.
+
+**Authentication**: None required
+
+**Response Codes**:
+
+- `200` - Service is ready (configuration loaded)
+- `503` - Service is not ready
+
+**Response Schema**:
+
+```json
+{
+  "status": "ready|not_ready",
+  "timestamp": "2025-01-30T12:00:00.000Z",
+  "configuration": {
+    "loaded": true,
+    "serverCount": 3,
+    "enabledCount": 2,
+    "disabledCount": 1,
+    "authEnabled": true,
+    "transport": "http"
+  }
+}
+```
+
+**Use Cases**:
+
+- Kubernetes readiness probes
+- Load balancer ready checks
+- Deployment validation
+
+## Health Status Logic
+
+### Overall Status Determination
+
+The overall health status is determined by:
+
+1. **Configuration Status**: Must be loaded for `healthy` or `degraded`
+2. **Server Health Ratio**:
+   - All servers healthy → `healthy`
+   - No servers configured → `degraded`
+   - > 50% servers healthy → `degraded`
+   - ≤50% servers healthy → `unhealthy`
+
+### Server Health Classification
+
+Individual servers are considered healthy if:
+
+- Status is `connected`
+- No recent critical errors
+- Responding to health checks
+
+## Rate Limiting
+
+Health endpoints have relaxed rate limiting:
+
+- **Window**: 5 minutes
+- **Limit**: 200 requests per IP
+- **Headers**: Standard rate limit headers included
+
+## Monitoring Integration Examples
+
+### Kubernetes Health Probes
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 1mcp-agent
+spec:
+  template:
+    spec:
+      containers:
+        - name: 1mcp
+          image: ghcr.io/1mcp-app/agent:latest
+          ports:
+            - containerPort: 3050
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 3050
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 3050
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+```
+
+### Docker Compose Health Check
+
+```yaml
+version: '3.8'
+services:
+  1mcp:
+    image: ghcr.io/1mcp-app/agent:latest
+    ports:
+      - '3050:3050'
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3050/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+```
+
+### HAProxy Backend Health Check
+
+```
+backend 1mcp_servers
+    balance roundrobin
+    option httpchk GET /health/ready
+    http-check expect status 200
+    server 1mcp-1 1mcp-1:3050 check inter 30s
+    server 1mcp-2 1mcp-2:3050 check inter 30s
+```
+
+### Script-Based Monitoring
+
+```bash
+#!/bin/bash
+# Simple health check script
+
+HEALTH_URL="http://localhost:3050/health"
+RESPONSE=$(curl -s -w "%{http_code}" -o /tmp/health.json "$HEALTH_URL")
+HTTP_CODE="${RESPONSE: -3}"
+
+if [ "$HTTP_CODE" -eq 200 ]; then
+    STATUS=$(jq -r '.status' /tmp/health.json)
+    UNHEALTHY=$(jq -r '.servers.unhealthy' /tmp/health.json)
+
+    echo "1MCP Health: $STATUS (Unhealthy servers: $UNHEALTHY)"
+
+    if [ "$STATUS" = "unhealthy" ]; then
+        exit 1
+    fi
+else
+    echo "1MCP Health Check Failed: HTTP $HTTP_CODE"
+    exit 1
+fi
+```
+
+## Error Responses
+
+### Service Unavailable (503)
+
+```json
+{
+  "status": "unhealthy",
+  "timestamp": "2025-01-30T12:00:00.000Z",
+  "version": "0.15.0",
+  "system": {
+    /* system info */
+  },
+  "servers": {
+    "total": 3,
+    "healthy": 0,
+    "unhealthy": 3,
+    "details": [
+      /* server details */
+    ]
+  },
+  "configuration": {
+    "loaded": false,
+    "serverCount": 0,
+    "enabledCount": 0,
+    "disabledCount": 0,
+    "authEnabled": false,
+    "transport": "http"
+  }
+}
+```
+
+### Internal Server Error (500)
+
+```json
+{
+  "status": "unhealthy",
+  "timestamp": "2025-01-30T12:00:00.000Z",
+  "error": "Health check failed",
+  "message": "Configuration service unavailable"
+}
+```
+
+## Security Considerations
+
+### Production Deployment
+
+**Network-Level Protection** (Recommended):
+
+- Restrict health endpoints to monitoring networks only
+- Use firewall rules to limit access to trusted IPs
+- Consider VPN or private network access for detailed endpoints
+
+**Information Exposure Control**:
+
+- Use `basic` or `minimal` detail levels for public-facing deployments
+- `full` detail level recommended only for private networks
+- Error sanitization is always enabled to prevent credential leakage
+
+**Example Security Configuration**:
+
+```bash
+# Development environment
+npx -y @1mcp/agent --config mcp.json --health-info-level full
+
+# Staging environment
+npx -y @1mcp/agent --config mcp.json --health-info-level basic
+
+# Production environment (default minimal level is secure)
+npx -y @1mcp/agent --config mcp.json
+```
+
+### Detail Level Impact
+
+| Level     | System Info | Server Details       | Error Messages | Use Case              |
+| --------- | ----------- | -------------------- | -------------- | --------------------- |
+| `full`    | Complete    | Complete + sanitized | Sanitized      | Internal monitoring   |
+| `basic`   | Limited     | Status + sanitized   | Sanitized      | Restricted monitoring |
+| `minimal` | Basic only  | Counts only          | None           | Public/Load balancer  |
+
+## Best Practices
+
+### Monitoring Setup
+
+1. **Use Multiple Endpoints**: Combine `/health`, `/health/live`, and `/health/ready` for comprehensive monitoring
+2. **Set Appropriate Timeouts**: Health checks should complete within 5-10 seconds
+3. **Configure Retry Logic**: Allow 2-3 retries with exponential backoff
+4. **Monitor Trends**: Track health status changes over time
+5. **Security-First**: Choose appropriate detail level for your network exposure
+
+### Development Testing
+
+```bash
+# Test all health endpoints
+curl -v http://localhost:3050/health
+curl -v http://localhost:3050/health/live
+curl -v http://localhost:3050/health/ready
+
+# Check response headers
+curl -I http://localhost:3050/health
+
+# Monitor health status
+watch -n 5 'curl -s http://localhost:3050/health | jq ".status, .servers.healthy, .servers.unhealthy"'
+```
+
+
+=== ./../mcps/agent/docs/guide/configuration.md ===
+# Configuration Deep Dive
+
+The 1MCP Agent is configured using a JSON file, typically named `mcp.json`. This file allows you to define the backend MCP servers, set up authentication, and customize the agent's behavior.
+
+## 1. Basic Structure
+
+The root of the configuration file is a JSON object that can contain several top-level properties. The most important one is `mcpServers`.
+
+```json
+{
+  "mcpServers": {
+    // Server definitions go here
+  }
+}
+```
+
+## 2. `mcpServers`
+
+This section is a dictionary of all the backend MCP servers you want the agent to manage. Each key is a unique identifier for the server, and the value is an object containing the server's configuration.
+
+### Server Properties
+
+- `command` (required): An array of strings representing the command and arguments to start the server. The first element is the executable, and subsequent elements are the arguments.
+- `tags` (required): An array of strings used for routing requests. A server will only receive requests that include all the tags listed here.
+
+### Example
+
+```json
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": ["node", "/path/to/your/filesystem-server.js"],
+      "tags": ["filesystem"]
+    },
+    "search": {
+      "command": ["python", "/app/search_server.py", "--port", "8080"],
+      "tags": ["search", "web"]
+    }
+  }
+}
+```
+
+## 3. Authentication and Security
+
+The 1MCP Agent provides a robust set of authentication and security features that can be configured using command-line flags or environment variables. This approach allows for flexible and secure deployments.
+
+### Command-Line Flags and Environment Variables
+
+| Flag                         | Environment Variable               | Description                                                                                                                       |
+| ---------------------------- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `--enable-auth`              | `ONE_MCP_ENABLE_AUTH`              | Enables OAuth 2.1 authentication.                                                                                                 |
+| `--enable-scope-validation`  | `ONE_MCP_ENABLE_SCOPE_VALIDATION`  | Enables tag-based scope validation for OAuth 2.1.                                                                                 |
+| `--enable-enhanced-security` | `ONE_MCP_ENABLE_ENHANCED_SECURITY` | Enables additional security middleware.                                                                                           |
+| `--session-ttl`              | `ONE_MCP_SESSION_TTL`              | Sets the session expiry time in minutes.                                                                                          |
+| `--session-storage-path`     | `ONE_MCP_SESSION_STORAGE_PATH`     | Specifies a custom directory for session storage.                                                                                 |
+| `--rate-limit-window`        | `ONE_MCP_RATE_LIMIT_WINDOW`        | Sets the rate limit window in minutes for OAuth endpoints.                                                                        |
+| `--rate-limit-max`           | `ONE_MCP_RATE_LIMIT_MAX`           | Sets the maximum number of requests per window for OAuth endpoints.                                                               |
+| `--trust-proxy`              | `ONE_MCP_TRUST_PROXY`              | Configures the trust proxy settings for Express.js. See the [Trust Proxy documentation](/reference/trust-proxy) for more details. |
+
+### Example
+
+Here's how you might start the agent with authentication enabled:
+
+```bash
+npx -y @1mcp/agent --config mcp.json --enable-auth --session-ttl 60
+```
+
+This command starts the agent with authentication enabled and sets the session TTL to 60 minutes.
+
+## 4. Hot-Reloading
+
+The agent supports hot-reloading of the configuration file. If you make changes to `mcp.json` while the agent is running, it will automatically apply the new configuration without requiring a restart. This is useful for adding or removing backend servers on the fly.
+
+
+=== ./../mcps/agent/docs/guide/installation.md ===
+# Installation
+
+## Package Managers (Recommended)
+
+### npm/pnpm
+
+```bash
+# Install globally
+npm install -g @1mcp/agent
+# or
+pnpm add -g @1mcp/agent
+
+# Use directly
+npx @1mcp/agent --config mcp.json
+```
+
+### Docker
+
+```bash
+# Pull and run
+docker run -p 3000:3000 -v $(pwd)/mcp.json:/app/mcp.json ghcr.io/1mcp-app/agent:latest
+
+# With docker-compose
+cat > docker-compose.yml << 'EOF'
+version: '3.8'
+services:
+  1mcp:
+    image: ghcr.io/1mcp-app/agent:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./mcp.json:/app/mcp.json
+    environment:
+      - LOG_LEVEL=info
+EOF
+
+docker-compose up -d
+```
+
+## Build from Source
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm package manager
+
+### Build Steps
+
+```bash
+# Clone repository
+git clone https://github.com/1mcp-app/agent.git
+cd agent
+
+# Install dependencies
+pnpm install
+
+# Build
+pnpm build
+
+# Run
+node build/index.js --config mcp.json
+```
+
+## Verification
+
+Verify installation:
+
+```bash
+npx @1mcp/agent --version
+# Should output: @1mcp/agent v0.15.0
+```
+
+## System Requirements
+
+- **Memory**: 512MB RAM minimum, 2GB recommended
+- **Disk**: Space for dependencies and logs
+- **Network**: HTTP/HTTPS outbound access for MCP servers
+- **OS**: Linux, macOS, Windows (x64/ARM64)
+
+## Next Steps
+
+- [Quick Start Guide](/guide/quick-start) - Get running in 5 minutes
+- [Configuration](/guide/configuration) - Detailed setup options
+
+
+=== ./../mcps/agent/docs/guide/getting-started.md ===
+# Getting Started with 1MCP
+
+> **🎯 Goal**: Get you from individual MCP server connections to a unified proxy in simple, practical steps.
+
+## 🗺️ Your Journey Overview
+
+```mermaid
+graph LR
+    A[5 min<br/>Basic Setup] --> B[10 min<br/>Add Authentication]
+    B --> C[15 min<br/>Production Deployment]
+
+    A1[Single unified<br/>MCP endpoint] -.-> A
+    B1[OAuth 2.1<br/>authentication] -.-> B
+    C1[Stable production<br/>configuration] -.-> C
+```
+
+**Choose Your Starting Point**:
+
+- 👋 **New to MCP?** → Start with Level 1
+- 🔒 **Need authentication?** → Jump to Level 2
+- 🏢 **Production deployment?** → Go to Level 3
+
+---
+
+## 📋 Prerequisites
+
+### **System Requirements**
+
+- **OS**: Linux, macOS, or Windows
+- **Memory**: 512MB RAM minimum, 2GB recommended
+- **Node.js**: Version 18+ (for MCP servers)
+- **Network**: HTTP/HTTPS outbound access
+
+### **What You'll Need**
+
+- [ ] Existing MCP servers or intention to install them
+- [ ] Text editor for configuration files
+- [ ] Terminal/command line access
+- [ ] Basic understanding of JSON configuration
+
+### **5-Minute Environment Check**
+
+```bash
+# Check Node.js version
+node --version  # Should be 18+
+
+# Verify you can create files in your home directory
+touch ~/.test-file && rm ~/.test-file && echo "✅ File permissions OK"
+
+# Check if you have existing MCP servers
+ls ~/.config/*/mcp.json 2>/dev/null || echo "ℹ️ No existing MCP config found"
+```
+
+---
+
+## 🌟 Level 1: Basic Proxy (5 minutes)
+
+**🎯 Goal**: Replace individual MCP connections with single proxy
+**👤 Perfect for**: First-time users, simple setups, proof of concept
+
+### **What You'll Achieve**
+
+- ✅ Single configuration file instead of multiple connections
+- ✅ Unified health monitoring for all MCP servers
+- ✅ Automatic connection management and retry logic
+- ✅ One endpoint for your AI assistant to connect to
+
+### **Step 1: No Installation Needed** (0 minutes)
+
+```bash
+# 1MCP runs via npx - no global installation required
+# Verify it works:
+npx -y @1mcp/agent --help
+```
+
+### **Step 2: Create Basic Configuration** (2 minutes)
+
+```bash
+# Create config directory
+mkdir -p ~/.config/1mcp
+
+# Create basic configuration file
+cat > ~/.config/1mcp/mcp.json << 'EOF'
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+      "tags": ["local", "files"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "tags": ["memory", "notes"]
+    }
+  }
+}
+EOF
+```
+
+### **Step 3: Start 1MCP** (1 minute)
+
+```bash
+# Start with your config
+npx -y @1mcp/agent --config ~/.config/1mcp/mcp.json --port 3050
+
+# You should see:
+# ✅ Server is running on port 3050 with HTTP/SSE transport
+# ✅ Connected to filesystem, memory servers
+# 📋 OAuth Management Dashboard: http://localhost:3050/oauth
+```
+
+### **Step 4: Test Your Setup** (< 1 minute)
+
+```bash
+# Use MCP Inspector for testing and debugging (recommended)
+npx @modelcontextprotocol/inspector
+
+# This opens a powerful UI at http://localhost:5173 that lets you:
+# - Connect to your 1MCP proxy at http://localhost:3050
+# - Test all available tools and resources
+# - Debug authentication flows
+# - Monitor real-time MCP protocol messages
+
+# Alternative: Check the health via curl
+curl http://localhost:3050/health
+# Or visit http://localhost:3050/health in your browser
+```
+
+### **✅ Level 1 Complete!**
+
+**🎉 Success Indicators**:
+
+- [ ] 1MCP server running on port 3050
+- [ ] MCP Inspector connects successfully at http://localhost:5173
+- [ ] Health endpoint shows servers connected at http://localhost:3050/health
+- [ ] Can test filesystem and memory tools via Inspector UI
+
+**🔧 Common Issues**:
+
+- **Port 3050 in use?** → Use `--port 3051`
+- **MCP servers fail to start?** → Check Node.js version is 21+
+- **Permission errors?** → Ensure ~/.config/1mcp directory is writable
+- **Config not found?** → Use absolute path: `--config $(pwd)/.config/1mcp/mcp.json`
+
+**➡️ Next Level**: [Add authentication and access control](#-level-2-secure-access-15-minutes)
+
+---
+
+## 🔒 Level 2: Secure Access (15 minutes)
+
+**🎯 Goal**: Add authentication and granular access control
+**👤 Perfect for**: Teams, shared environments, security-conscious users
+
+### **What You'll Achieve**
+
+- ✅ OAuth 2.1 authentication with secure token management
+- ✅ Scope-based permissions controlling MCP server access
+- ✅ User session management with automatic token refresh
+- ✅ Audit logging of all access attempts
+
+### **Step 1: Enable Authentication** (1 minute)
+
+```bash
+# Stop your existing 1MCP instance (Ctrl+C)
+
+# Start with authentication enabled
+npx -y @1mcp/agent --config ~/.config/1mcp/mcp.json --port 3050 --enable-auth
+
+# New output shows:
+# 🔐 Authentication enabled - OAuth 2.1 endpoints available via SDK
+# 📋 OAuth Management Dashboard: http://localhost:3050/oauth
+```
+
+### **Step 2: Use the OAuth Management Dashboard** (2 minutes)
+
+Instead of a manual registration endpoint, the 1MCP Agent provides an OAuth Management Dashboard to manage the authorization flow with your backend services. When a backend service requires OAuth, you can use this dashboard to initiate and approve the authorization request.
+
+Visit the dashboard in your browser to see the status of your services and authorize any that are awaiting OAuth.
+
+### **Step 3: Configure Scope-Based Access** (2 minutes)
+
+```bash
+# Update your configuration with more detailed tagging
+cat > ~/.config/1mcp/mcp.json << 'EOF'
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+      "tags": ["filesystem", "local", "sensitive"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "tags": ["memory", "notes", "safe"]
+    }
+  }
+}
+EOF
+
+# Config will hot-reload automatically - no restart needed!
+```
+
+### **Step 4: Test Authentication** (2 minutes)
+
+```bash
+# Use MCP Inspector to test OAuth flow (recommended)
+npx @modelcontextprotocol/inspector
+
+# In the Inspector UI:
+# 1. Connect to http://localhost:3050
+# 2. You'll see OAuth authentication prompts
+# 3. Use the built-in OAuth flow testing
+# 4. Test scope-based access with different tags
+
+# Alternative: Manual OAuth testing via curl
+# Try accessing SSE endpoint without authentication
+curl http://localhost:3050/sse
+# Should require authentication when auth is enabled
+
+# Manual token flow (if needed for debugging)
+export CLIENT_ID="your-client-id-from-step-2"
+export CLIENT_SECRET="your-client-secret-from-step-2"
+
+curl -X POST http://localhost:3050/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials&client_id=$CLIENT_ID&client_secret=$CLIENT_SECRET&scope=tag:safe"
+```
+
+### **✅ Level 2 Complete!**
+
+**🎉 Success Indicators**:
+
+- [ ] MCP Inspector successfully handles OAuth flow
+- [ ] OAuth client registration works via Inspector UI
+- [ ] Scope restrictions properly enforced (tag-based access)
+- [ ] Can test different scopes using Inspector interface
+- [ ] Management dashboard shows authentication status
+
+**🔧 Common Issues**:
+
+- **MCP Inspector can't connect?** → Verify 1MCP is running on port 3050
+- **OAuth flow fails in Inspector?** → Check 1MCP is running with --enable-auth
+- **Scope errors?** → Ensure server tags match requested scopes
+- **Inspector shows "Unauthorized"?** → Complete OAuth flow in Inspector UI first
+- **Dashboard not loading?** → Ensure --enable-auth flag is used
+
+**➡️ Next Level**: [Production-ready deployment](#-level-3-production-ready-45-minutes)
+
+---
+
+## 🏗️ Level 3: Production Ready (15 minutes)
+
+**🎯 Goal**: Stable production deployment with basic security
+**👤 Perfect for**: Production environments, teams, shared deployments
+
+### **What You'll Achieve**
+
+- ✅ Systemd service for automatic startup
+- ✅ Basic security configuration
+- ✅ Log management and rotation
+- ✅ Configuration backup
+- ✅ Basic monitoring
+
+### **Step 1: Production Configuration** (5 minutes)
+
+```bash
+# Create production config directory
+sudo mkdir -p /etc/1mcp
+sudo chown $USER:$USER /etc/1mcp
+
+# Production configuration
+cat > /etc/1mcp/mcp.json << 'EOF'
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/app/data"],
+      "tags": ["filesystem", "data", "sensitive"]
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "tags": ["memory", "cache", "safe"]
+    }
+  }
+}
+EOF
+```
+
+### **Step 2: Create Systemd Service** (5 minutes)
+
+```bash
+# Create systemd service file
+sudo tee /etc/systemd/system/1mcp.service << 'EOF'
+[Unit]
+Description=1MCP - Universal MCP Server Proxy
+After=network.target
+
+[Service]
+Type=simple
+User=$USER
+WorkingDirectory=/home/$USER
+ExecStart=/usr/bin/npx -y @1mcp/agent --config /etc/1mcp/mcp.json --port 3050 --enable-auth
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Enable and start service
+sudo systemctl daemon-reload
+sudo systemctl enable 1mcp
+sudo systemctl start 1mcp
+
+# Check status
+sudo systemctl status 1mcp
+```
+
+### **Step 3: Basic Monitoring** (5 minutes)
+
+```bash
+# Simple health check script
+cat > /usr/local/bin/1mcp-health-check << 'EOF'
+#!/bin/bash
+HEALTH_URL="http://localhost:3050/health"
+RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "$HEALTH_URL")
+
+if [ "$RESPONSE" = "200" ]; then
+    echo "✅ 1MCP healthy ($(date))"
+    exit 0
+else
+    echo "❌ 1MCP unhealthy (HTTP $RESPONSE) ($(date))"
+    exit 1
+fi
+EOF
+
+sudo chmod +x /usr/local/bin/1mcp-health-check
+
+# Add to crontab for regular health checks
+(crontab -l 2>/dev/null; echo "*/5 * * * * /usr/local/bin/1mcp-health-check >> /var/log/1mcp-health.log 2>&1") | crontab -
+
+# Check logs
+tail -f /var/log/1mcp-health.log
+```
+
+### **Step 4: Configure Environment** (Optional)
+
+```bash
+# Set environment variables for production
+sudo tee -a /etc/environment << 'EOF'
+ONE_MCP_ENABLE_AUTH=true
+ONE_MCP_ENABLE_ENHANCED_SECURITY=true
+ONE_MCP_RATE_LIMIT_WINDOW=15
+ONE_MCP_RATE_LIMIT_MAX=100
+EOF
+
+# Restart service to pick up environment changes
+sudo systemctl restart 1mcp
+```
+
+### **Step 5: Backup Configuration** (Optional)
+
+```bash
+# Simple backup script
+cat > ~/1mcp-backup.sh << 'EOF'
+#!/bin/bash
+TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+cp /etc/1mcp/mcp.json ~/"1mcp-config-backup-$TIMESTAMP.json"
+echo "✅ Configuration backed up to ~/1mcp-config-backup-$TIMESTAMP.json"
+EOF
+
+chmod +x ~/1mcp-backup.sh
+
+# Run backup
+~/1mcp-backup.sh
+```
+
+### **✅ Level 3 Complete!**
+
+**🎉 Success Indicators**:
+
+- [ ] 1MCP running as systemd service
+- [ ] Service starts automatically on boot
+- [ ] Health check script working
+- [ ] Configuration backed up
+- [ ] Health endpoint accessible at http://localhost:3050/health
+
+**🔧 Production Checklist**:
+
+- [ ] SSL/TLS certificate configured (use reverse proxy like nginx)
+- [ ] Firewall rules configured (allow only port 3050)
+- [ ] OAuth clients registered for your applications
+- [ ] Server tags configured appropriately
+- [ ] Configuration backed up regularly
+
+**➡️ Next Level**: [Advanced optimization](#-level-4-advanced-optimization-2-hours)
+
+---
+
+## 🔧 Beyond Basic Setup
+
+**Additional configuration options available:**
+
+### **Transport Configuration**
+
+- Use `--transport sse` for Server-Sent Events
+- Use `--transport stdio` for standard input/output
+- Use `--transport http` for streamable HTTP (default)
+
+### **Tag Filtering**
+
+- Filter servers by tags: `--tags "network,filesystem"`
+- Configure tag-based OAuth scopes
+
+### **Reverse Proxy Setup**
+
+- Configure `--trust-proxy` for proxy environments
+- Use `--external-url` for public-facing deployments
+
+### **Simple Reverse Proxy Setup** (Optional)
+
+```bash
+# Basic nginx configuration for SSL termination
+sudo tee /etc/nginx/sites-available/1mcp << 'EOF'
+server {
+    listen 80;
+    server_name your-domain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name your-domain.com;
+
+    ssl_certificate /path/to/your/cert.pem;
+    ssl_certificate_key /path/to/your/key.pem;
+
+    location / {
+        proxy_pass http://localhost:3050;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+EOF
+```
+
+### **Using Different Configurations**
+
+```bash
+# Create environment-specific configs
+cp /etc/1mcp/mcp.json /etc/1mcp/mcp-dev.json
+cp /etc/1mcp/mcp.json /etc/1mcp/mcp-staging.json
+
+# Start with different configs
+npx -y @1mcp/agent --config /etc/1mcp/mcp-dev.json --port 3051
+npx -y @1mcp/agent --config /etc/1mcp/mcp-staging.json --port 3052
+```
+
+### **Basic Log Monitoring**
+
+```bash
+# Monitor 1MCP logs
+sudo journalctl -u 1mcp -f
+
+# Check for errors
+sudo journalctl -u 1mcp --since "1 hour ago" | grep -i error
+
+# Simple log analysis script
+cat > ~/1mcp-log-summary.sh << 'EOF'
+#!/bin/bash
+echo "=== 1MCP Service Status ==="
+sudo systemctl status 1mcp --no-pager
+echo
+echo "=== Recent Errors ==="
+sudo journalctl -u 1mcp --since "1 hour ago" | grep -i error | tail -10
+EOF
+
+chmod +x ~/1mcp-log-summary.sh
+```
+
+### **Environment Variables Reference**
+
+```bash
+# Authentication settings
+ONE_MCP_ENABLE_AUTH=true
+ONE_MCP_ENABLE_SCOPE_VALIDATION=true
+
+# Rate limiting
+ONE_MCP_RATE_LIMIT_WINDOW=15  # 15 minutes
+ONE_MCP_RATE_LIMIT_MAX=100
+
+# Security
+ONE_MCP_ENABLE_ENHANCED_SECURITY=true
+ONE_MCP_TRUST_PROXY=loopback
+
+# Session management
+ONE_MCP_SESSION_TTL=1440  # 24 hours
+ONE_MCP_SESSION_STORAGE_PATH=/var/lib/1mcp/sessions
+```
+
+### **✅ Setup Complete!**
+
+You now have 1MCP running as a stable service with basic authentication and monitoring.
+
+---
+
+## 🆘 Troubleshooting Guide
+
+### **Common Issues & Solutions**
+
+#### **🔌 Connection Issues**
+
+```bash
+# Problem: "Connection refused"
+# Solution: Check if 1MCP is running
+systemctl status 1mcp
+# Check application logs for server status
+
+# Problem: "MCP server not responding"
+# Solution: Check individual server health
+LOG_LEVEL=debug npx -y @1mcp/agent --config ~/.config/1mcp/mcp.json
+```
+
+#### **🔐 Authentication Issues**
+
+```bash
+# Problem: "Invalid token"
+# Solution: Check token expiration and scopes
+# Check token validity through OAuth endpoints (when auth enabled)
+
+# Problem: "Insufficient scope"
+# Solution: Verify server tags match token scopes
+cat ~/.config/1mcp/mcp.json | jq '.mcpServers[].tags'
+```
+
+#### **⚡ Performance Issues**
+
+```bash
+# Problem: Slow response times
+# Solution: Check server status and logs
+# Check application logs for server status
+# Check logs for connection issues
+htop # Check CPU/memory usage
+
+# Problem: High error rates
+# Solution: Check server logs for patterns
+journalctl -u 1mcp -f --lines=100
+```
+
+### **Getting Help**
+
+- 📖 **Documentation**: [Documentation Home](/)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/1mcp-app/agent/issues)
+- 💬 **Community**: [Discussions](https://github.com/1mcp-app/agent/discussions)
+
+---
+
+## 🎯 Next Steps
+
+- [Explore security features](/reference/security)
+- [Advanced architecture](/reference/architecture)
+
+---
+
+> **🎉 Congratulations!** You've successfully set up 1MCP from basic proxy to enterprise-grade infrastructure. Your AI assistants now have reliable, secure, and scalable access to all their MCP capabilities through a single, unified interface.
+
+
+=== ./../mcps/agent/docs/guide/proxy-support.md ===
+# Proxy Support
+
+1MCP supports trust proxy configuration for deployment behind load balancers and reverse proxies.
+
+## Overview
+
+When 1MCP runs behind a proxy, it needs to understand the real client IP addresses and protocol information for security and logging purposes.
+
+## Configuration
+
+### Basic Trust Proxy
+
+```json
+{
+  "server": {
+    "trustProxy": true
+  }
+}
+```
+
+### Specific Proxy IPs
+
+```json
+{
+  "server": {
+    "trustProxy": ["127.0.0.1", "10.0.0.0/8"]
+  }
+}
+```
+
+### Advanced Configuration
+
+```json
+{
+  "server": {
+    "trustProxy": {
+      "enabled": true,
+      "proxies": ["127.0.0.1", "::1"],
+      "headers": {
+        "clientIp": "X-Forwarded-For",
+        "protocol": "X-Forwarded-Proto",
+        "host": "X-Forwarded-Host"
+      }
+    }
+  }
+}
+```
+
+## Common Proxy Setups
+
+### nginx
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+1MCP configuration:
+
+```json
+{
+  "server": {
+    "trustProxy": true,
+    "port": 3000
+  }
+}
+```
+
+### Apache
+
+```apache
+<VirtualHost *:80>
+    ServerName your-domain.com
+    ProxyPass / http://localhost:3000/
+    ProxyPassReverse / http://localhost:3000/
+    ProxyPreserveHost On
+    ProxyAddHeaders On
+</VirtualHost>
+```
+
+### Cloudflare
+
+For Cloudflare, trust their IP ranges:
+
+```json
+{
+  "server": {
+    "trustProxy": [
+      "173.245.48.0/20",
+      "103.21.244.0/22",
+      "103.22.200.0/22",
+      "103.31.4.0/22",
+      "141.101.64.0/18",
+      "108.162.192.0/18",
+      "190.93.240.0/20"
+    ]
+  }
+}
+```
+
+### Docker Compose with nginx
+
+```yaml
+version: '3.8'
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - 1mcp
+
+  1mcp:
+    image: ghcr.io/1mcp-app/agent:latest
+    environment:
+      - TRUST_PROXY=true
+    volumes:
+      - ./mcp.json:/app/mcp.json
+```
+
+## Security Considerations
+
+1. **Only trust known proxies** - Never use `trustProxy: true` in production without specifying exact IPs
+2. **Validate headers** - Ensure proxy correctly sets forwarded headers
+3. **Monitor for spoofing** - Log and alert on suspicious IP patterns
+
+## Troubleshooting
+
+**Real IPs not detected?**
+
+- Check proxy configuration sets `X-Forwarded-For` header
+- Verify proxy IP is in trust list
+- Review logs for header values
+
+**SSL termination issues?**
+
+- Ensure proxy sets `X-Forwarded-Proto: https`
+- Check redirect loops in proxy config
+
+For detailed configuration, see [Trust Proxy Reference](/reference/trust-proxy).
+
+
+=== ./../mcps/agent/docs/guide/quick-start.md ===
+# Quick Start
+
+Get 1MCP running in 5 minutes with a basic configuration.
+
+## Prerequisites
+
+- Node.js 18+
+
+## Basic Setup
+
+1.  **Create Configuration**
+
+    ```bash
+    # Create a basic config file
+    cat > mcp.json << 'EOF'
+    {
+      "mcpServers": {
+        "filesystem": {
+          "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+          "description": "File system access"
+        }
+      }
+    }
+    EOF
+    ```
+
+2.  **Start the Server**
+
+    ```bash
+    npx -y @1mcp/agent --config mcp.json --port 3000
+    ```
+
+3.  **Test Connection**
+
+    The server is now running on port 3000. You can now connect your MCP client to this port.
+
+That's it! Your 1MCP proxy is now running and aggregating MCP servers.
+
+## Next Steps
+
+- [Enable Authentication](/guide/authentication) for production use
+- [Add More Servers](/guide/configuration) to expand capabilities
+
+## Common Issues
+
+**Server fails to start?**
+
+- Check that Node.js 18+ is installed: `node --version`
+- Verify the config file is valid JSON: `cat mcp.json | jq`
+
+**Can't connect to MCP servers?**
+
+- Ensure server commands are executable
+- Check server logs for specific error messages
+
+
+=== ./../mcps/agent/docs/guide/server-filtering.md ===
+# Server Filtering by Tags
+
+The 1MCP Agent provides tag-based server filtering, allowing you to direct requests to specific backend MCP servers based on their assigned tags. This feature helps organize and control access to different MCP servers by their capabilities.
+
+## How It Works
+
+When connecting to the 1MCP Agent, you can specify tags to filter which backend servers are available. The agent will only connect to and route requests to servers that have the specified tags.
+
+For example, if you have two servers—one with the `filesystem` tag and another with the `search` tag—you can control which servers are available by including the appropriate tags in your connection.
+
+## Configuration
+
+To enable server filtering, you need to assign tags to your backend servers in your `mcp.json` configuration file.
+
+```json
+{
+  "mcpServers": {
+    "file_server": {
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem", "/tmp"],
+      "tags": ["filesystem", "read-only"]
+    },
+    "search_server": {
+      "command": ["uvx", "mcp-server-fetch"],
+      "tags": ["search", "web"]
+    }
+  }
+}
+```
+
+In this example:
+
+- The `file_server` is tagged with `filesystem` and `read-only`.
+- The `search_server` is tagged with `search` and `web`.
+
+## Usage
+
+When connecting to the 1MCP agent, you can specify tags to filter which servers are available:
+
+```bash
+# Only connect to servers with "filesystem" tag
+npx -y @1mcp/agent --transport stdio --tags "filesystem"
+
+# Connect to servers with either "filesystem" or "web" tags
+npx -y @1mcp/agent --transport stdio --tags "filesystem,web"
+```
+
+For HTTP connections with tag filtering, specify tags in the request headers or authentication scope (when OAuth is enabled).
+
+If multiple tags are specified, servers must have ALL the specified tags to be included.
+
+
+=== ./../mcps/agent/docs/guide/authentication.md ===
+# Authentication
+
+The 1MCP Agent uses a dynamic, SDK-based approach to OAuth 2.1 authentication. Instead of a static configuration file, the agent provides a set of command-line flags and environment variables to configure authentication, and an interactive dashboard to manage the authorization flow with backend services.
+
+## Enabling Authentication
+
+To enable authentication, start the agent with the `--enable-auth` flag:
+
+```bash
+npx -y @1mcp/agent --config mcp.json --enable-auth
+```
+
+This will activate the OAuth 2.1 endpoints and require authentication for all incoming requests.
+
+## OAuth Management Dashboard
+
+Once authentication is enabled, you can use the OAuth Management Dashboard to manage the authorization flow with your backend services. The dashboard is available at the `/oauth` endpoint of your agent's URL (e.g., `http://localhost:3050/oauth`).
+
+The dashboard allows you to:
+
+- View the connection status of all your backend services.
+- Initiate the OAuth flow for services that require authorization.
+- Approve or deny authorization requests.
+
+Here's a preview of the management dashboard:
+
+![OAuth Management Dashboard](/images/auth-management.png)
+
+When you initiate the authorization flow, you will be prompted to approve or deny the request:
+
+![OAuth Authorize Application](/images/oauth-authorize-application.png)
+
+## Tag-Based Scope Validation
+
+The agent supports tag-based scope validation, which allows you to control access to backend services based on their tags. When a client requests an access token, it can specify a set of tags as scopes. The agent will then only allow the client to access services that have all the requested tags.
+
+To enable tag-based scope validation, use the `--enable-scope-validation` flag:
+
+```bash
+npx -y @1mcp/agent --config mcp.json --enable-auth --enable-scope-validation
+```
+
+## Configuration
+
+For a complete list of authentication-related configuration options, see the [Configuration documentation](/guide/configuration).
+
+
+=== ./../mcps/agent/docs/guide/features.md ===
+# 1MCP Features: What Can You Do?
+
+> **🎯 Philosophy**: Every feature exists to solve a real user problem. We built capabilities you actually need, not just features that sound impressive.
+
+## 🚀 Quick Discovery (Choose Your Path)
+
+**👋 I'm new to 1MCP** → [Core Features](#-core-features-what-everyone-gets)
+**🔒 I need security** → [Security Features](#-security--access-control)
+**⚡ I want performance** → [Performance Features](#-performance--reliability)
+**🏢 I run production systems** → [Enterprise Features](#-enterprise--operations)
+**🔧 I'm a developer** → [Developer Features](#-developer--integration)
+
+---
+
+## 🌟 Core Features (What Everyone Gets)
+
+### **🔗 Universal MCP Aggregation**
+
+**What it does**: Connects to all your MCP servers through one endpoint
+**Why you need it**: Stop managing dozens of individual server connections
+**How it helps**: One configuration file, one health check, one connection to manage
+
+```mermaid
+graph LR
+    A[Your AI Assistant] --> B[1MCP Proxy]
+    B --> C[Server 1]
+    B --> D[Server 2]
+    B --> E[Server 3]
+    B --> F[Server N...]
+
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#e8f5e8
+    style E fill:#e8f5e8
+    style F fill:#e8f5e8
+```
+
+**⏱️ Setup Time**: 5 minutes
+**🎯 Perfect For**: Anyone using 2+ MCP servers
+**✅ You Get**: Unified interface, automatic health monitoring, connection pooling
+
+---
+
+### **🔄 Hot Configuration Reload**
+
+**What it does**: Updates server configuration without restarting or losing connections
+**Why you need it**: Add/remove MCP servers instantly with zero downtime
+**How it helps**: Edit config file → Changes applied automatically in <30 seconds
+
+**Real Example**:
+
+```bash
+# Edit your config file
+vim ~/.config/1mcp/mcp.json
+
+# Add a new server:
+"new-server": {
+  "command": ["npx", "-y", "@modelcontextprotocol/server-web"],
+  "tags": ["web", "search"]
+}
+
+# Save file → Server automatically detected and connected
+# No restart needed, existing connections preserved
+```
+
+**⏱️ Setup Time**: Built-in (no setup required)
+**🎯 Perfect For**: Development, production environments, frequent config changes
+**✅ You Get**: Zero-downtime updates, instant server addition/removal, preserved sessions
+
+---
+
+### **📊 Basic Status Monitoring**
+
+**What it does**: Provides logging and basic status information for MCP servers
+**Why you need it**: Track server connections and troubleshoot issues
+**How it helps**: Structured logging, connection status, error tracking
+
+**Status Information**:
+
+- Server status available through logs
+- Connection information via MCP protocol responses
+- No dedicated health endpoint
+- Monitor through application logs and server behavior
+
+**⏱️ Setup Time**: Automatic
+**🎯 Perfect For**: Production monitoring, troubleshooting, system reliability
+**✅ You Get**: Structured logging, error tracking, connection monitoring
+
+---
+
+## 🔒 Security & Access Control
+
+### **🛡️ OAuth 2.1 Authentication**
+
+**What it does**: Industry-standard authentication with secure token management
+**Why you need it**: Control who can access your MCP servers with enterprise-grade security
+**How it helps**: User sessions, token refresh, audit trails, scope-based permissions
+
+**Authentication Flow**:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant 1MCP
+    participant AI Assistant
+
+    User->>1MCP: Register OAuth client
+    1MCP-->>User: Client credentials
+    AI Assistant->>1MCP: Request token with scopes
+    1MCP-->>AI Assistant: Access token
+    AI Assistant->>1MCP: API calls with Bearer token
+    1MCP-->>AI Assistant: Authorized responses
+```
+
+**⏱️ Setup Time**: 15 minutes
+**🎯 Perfect For**: Teams, shared environments, security compliance
+**✅ You Get**: Secure authentication, session management, token refresh, audit logs
+
+---
+
+### **🏷️ Tag-Based Access Control**
+
+**What it does**: Granular permissions using server tags and OAuth scopes
+**Why you need it**: Give users access to only the MCP servers they need
+**How it helps**: Tag servers by sensitivity/function, grant access by role
+
+**Permission Examples**:
+
+```yaml
+# Server Configuration
+filesystem: { tags: ['files', 'sensitive'] }
+database: { tags: ['database', 'sensitive'] }
+web-search: { tags: ['web', 'safe'] }
+memory: { tags: ['memory', 'safe'] }
+
+# User Roles
+Developer: 'tag:files tag:database tag:web tag:memory' # Full access
+Analyst: 'tag:database tag:web' # Data access only
+Demo: 'tag:web' # Public APIs only
+```
+
+**⏱️ Setup Time**: 5 minutes per role
+**🎯 Perfect For**: Multi-user environments, principle of least privilege
+**✅ You Get**: Role-based access, fine-grained permissions, security compliance
+
+---
+
+### **🚫 Rate Limiting & DDoS Protection**
+
+**What it does**: Prevents abuse with configurable request limits per client
+**Why you need it**: Protect your MCP servers from overload and malicious usage
+**How it helps**: Per-client limits, burst handling, automatic throttling
+
+**Rate Limit Configuration**:
+
+```bash
+# Configure via CLI flags
+npx -y @1mcp/agent --config mcp.json --enable-auth \
+  --rate-limit-window 15 \     # 15 minute window
+  --rate-limit-max 100         # 100 requests per window
+
+# Or via environment variables
+export ONE_MCP_RATE_LIMIT_WINDOW=15
+export ONE_MCP_RATE_LIMIT_MAX=100
+npx -y @1mcp/agent --config mcp.json --enable-auth
+```
+
+**⏱️ Setup Time**: Built-in with sensible defaults
+**🎯 Perfect For**: Public APIs, high-traffic environments, abuse prevention
+**✅ You Get**: Automatic protection, configurable limits, fair usage enforcement
+
+---
+
+## ⚡ Performance & Reliability
+
+### **🔄 Efficient Request Handling**
+
+**What it does**: Direct request forwarding to backend MCP servers with proper error handling
+**Why you need it**: Reliable communication between AI assistants and MCP servers
+**How it helps**: Consistent request processing, error recovery, connection management
+
+**⏱️ Setup Time**: Built-in functionality
+**🎯 Perfect For**: Reliable MCP server communication, error handling
+**✅ You Get**: Stable connections, proper error handling, request forwarding
+
+---
+
+### **🔄 Automatic Retry & Recovery**
+
+**What it does**: Intelligent retry logic with exponential backoff for failed connections
+**Why you need it**: Handle temporary server failures gracefully without manual intervention
+**How it helps**: Automatic recovery, circuit breaker pattern, minimal service disruption
+
+**Recovery Strategy**:
+
+```
+Connection Failure → Wait 1s → Retry
+Still Failing → Wait 2s → Retry
+Still Failing → Wait 4s → Retry
+Still Failing → Wait 8s → Mark server unavailable
+Server Recovers → Immediate reconnection
+```
+
+**Reliability Impact**:
+
+- **Individual Server Uptime**: 95% typical
+- **Effective System Uptime**: 99.9% with retry logic
+- **Recovery Time**: Seconds instead of manual intervention
+
+**⏱️ Setup Time**: Built-in resilience
+**🎯 Perfect For**: Production systems, unreliable networks, critical workflows
+**✅ You Get**: Automatic recovery, improved uptime, reduced maintenance
+
+---
+
+### **📊 Basic Monitoring & Logging**
+
+**What it does**: Structured logging and basic monitoring for system status
+**Why you need it**: Track system status and troubleshoot issues
+**How it helps**: Winston-based logging, request/error tracking, connection monitoring
+
+**Available Monitoring**:
+
+```bash
+# Main MCP endpoint
+POST /mcp
+
+# OAuth management dashboard
+GET /oauth
+
+# Application logs for monitoring
+# Request/response logging
+# Error tracking with stack traces
+```
+
+**⏱️ Setup Time**: Built-in logging
+**🎯 Perfect For**: Basic monitoring, troubleshooting, system status
+**✅ You Get**: Structured logs, error tracking, request monitoring
+
+---
+
+## 🏢 Enterprise & Operations
+
+### **🔧 Single-Instance Deployment**
+
+**What it does**: Runs as a single process managing multiple MCP server connections
+**Why you need it**: Simple, reliable deployment with minimal resource overhead
+**How it helps**: Easy deployment, process management, unified configuration
+
+**Deployment Architecture**:
+
+```mermaid
+graph TB
+    AI[AI Assistant] --> MCP[1MCP Instance<br/>:3050]
+
+    subgraph "MCP Servers"
+        S1[Server 1]
+        S2[Server 2]
+        S3[Server N...]
+    end
+
+    MCP --> S1
+    MCP --> S2
+    MCP --> S3
+```
+
+**⏱️ Setup Time**: 5 minutes
+**🎯 Perfect For**: Individual use, small teams, simple deployments
+**✅ You Get**: Simple deployment, easy management, reliable operation
+
+---
+
+### **📋 Security Operation Logging**
+
+**What it does**: Logs security-related operations including authentication and scope validation
+**Why you need it**: Track OAuth operations and security events for monitoring
+**How it helps**: Structured logging of scope operations, authentication events, access control
+
+**Security Log Examples**:
+
+```bash
+# Scope validation events
+INFO: Scope operation: scope_validation_success {
+  "operation": "scope_validation_success",
+  "clientId": "app-client",
+  "requestedScopes": ["tag:filesystem"],
+  "grantedScopes": ["tag:filesystem", "tag:memory"],
+  "success": true
+}
+
+# Authorization events
+INFO: Scope operation: authorization_granted {
+  "operation": "authorization_granted",
+  "clientId": "app-client",
+  "requestedScopes": ["tag:web"],
+  "success": true
+}
+```
+
+**⏱️ Setup Time**: Built-in security logging
+**🎯 Perfect For**: Security monitoring, access tracking, OAuth debugging
+**✅ You Get**: Security event logs, scope operation tracking, authentication monitoring
+
+---
+
+### **💊 Health Monitoring & Observability**
+
+**What it does**: Comprehensive health check endpoints with system metrics and server status
+**Why you need it**: Monitor production deployments, enable automated health checks, and debugging
+**How it helps**: Real-time system status, automated alerts, load balancer integration
+
+**Health Check Endpoints**:
+
+```bash
+# Complete health status
+GET /health
+
+# Liveness probe (Kubernetes ready)
+GET /health/live
+
+# Readiness probe (configuration loaded)
+GET /health/ready
+```
+
+**Health Response Example**:
+
+```json
+{
+  "status": "healthy",
+  "timestamp": "2025-01-30T12:00:00.000Z",
+  "version": "0.15.0",
+  "system": {
+    "uptime": 3600,
+    "memory": {
+      "used": 50.5,
+      "total": 100.0,
+      "percentage": 50.5
+    }
+  },
+  "servers": {
+    "total": 3,
+    "healthy": 2,
+    "unhealthy": 1,
+    "details": [
+      {
+        "name": "filesystem-server",
+        "status": "connected",
+        "healthy": true,
+        "lastConnected": "2025-01-30T11:30:00.000Z",
+        "tags": ["filesystem"]
+      },
+      {
+        "name": "web-server",
+        "status": "error",
+        "healthy": false,
+        "lastError": "Connection timeout",
+        "tags": ["network", "web"]
+      }
+    ]
+  },
+  "configuration": {
+    "loaded": true,
+    "serverCount": 3,
+    "enabledCount": 2,
+    "disabledCount": 1,
+    "authEnabled": true,
+    "transport": "http"
+  }
+}
+```
+
+**Health Status Levels**:
+
+- **`healthy`** (200) - All systems operational
+- **`degraded`** (200) - Some issues but functional
+- **`unhealthy`** (503) - Critical issues affecting service
+
+**Integration Examples**:
+
+```yaml
+# Kubernetes deployment
+livenessProbe:
+  httpGet:
+    path: /health/live
+    port: 3050
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: 3050
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+# Docker Compose healthcheck
+healthcheck:
+  test: ['CMD', 'curl', '-f', 'http://localhost:3050/health']
+  interval: 30s
+  timeout: 10s
+  retries: 3
+```
+
+**⏱️ Setup Time**: Available immediately (built-in)
+**🎯 Perfect For**: Production monitoring, DevOps automation, debugging server issues
+**✅ You Get**: System metrics, server status, Kubernetes probes, load balancer health checks
+
+---
+
+### **🔧 Advanced Configuration Management**
+
+**What it does**: Environment-specific configs, secret management, feature flags
+**Why you need it**: Manage complex deployments across development, staging, production
+**How it helps**: Configuration templating, secret injection, environment isolation
+
+**Configuration Hierarchy**:
+
+```
+1. Environment Variables (highest priority)
+2. CLI Arguments
+3. Configuration Files
+4. Default Values (lowest priority)
+```
+
+**Secret Management Example**:
+
+```json
+{
+  "mcpServers": {
+    "database": {
+      "command": ["mcp-postgres"],
+      "env": {
+        "DATABASE_URL": "${DATABASE_URL}", // From environment
+        "API_KEY": "${SECRET:api-key}" // From secret store
+      }
+    }
+  }
+}
+```
+
+**⏱️ Setup Time**: 30 minutes for advanced configuration
+**🎯 Perfect For**: Multi-environment deployments, secret management, configuration as code
+**✅ You Get**: Environment separation, secret security, configuration templating
+
+---
+
+## 🔧 Developer & Integration
+
+### **🔌 RESTful API & Standards Compliance**
+
+**What it does**: Clean REST API with full MCP protocol compatibility
+**Why you need it**: Easy integration with any client, maintain MCP standard compliance
+**How it helps**: Well-documented endpoints, standard HTTP methods, consistent responses
+
+**API Examples**:
+
+```bash
+# MCP protocol endpoint
+POST /mcp
+Content-Type: application/json
+Authorization: Bearer {token}
+
+# OAuth management dashboard
+GET /oauth
+
+# OAuth endpoints (when auth enabled)
+POST /oauth/token
+GET /oauth/callback/:serverName
+```
+
+**⏱️ Setup Time**: Ready to use immediately
+**🎯 Perfect For**: Custom integrations, API clients, third-party tools
+**✅ You Get**: Standard REST API, MCP compliance, comprehensive documentation
+
+---
+
+### **📡 HTTP Transport with MCP Protocol**
+
+**What it does**: Reliable HTTP-based communication using the MCP protocol standard
+**Why you need it**: Standards-compliant communication between AI clients and MCP servers
+**How it helps**: Request/response patterns, proper error handling, protocol compliance
+
+**HTTP MCP Example**:
+
+```bash
+# MCP protocol over HTTP
+POST /mcp
+Content-Type: application/json
+Authorization: Bearer {token}
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/list",
+  "params": {}
+}
+```
+
+**⏱️ Setup Time**: Built-in, default transport
+**🎯 Perfect For**: Standard MCP client integration, reliable communication
+**✅ You Get**: MCP protocol compliance, reliable transport, standard HTTP methods
+
+**Note**: SSE transport is deprecated - use HTTP transport instead
+
+---
+
+### **🧪 Development & Integration Support**
+
+**What it does**: Provides development-friendly features for testing and integration
+**Why you need it**: Easier development, debugging, and integration testing
+**How it helps**: Hot-reload configuration, structured logging, MCP Inspector support
+
+**Development Features**:
+
+```bash
+# Hot-reload configuration changes
+npx -y @1mcp/agent --config dev.json
+# Edit dev.json → changes applied automatically
+
+# Use MCP Inspector for testing
+npx @modelcontextprotocol/inspector
+# Connect to http://localhost:3050 for interactive testing
+
+# Environment-specific logging
+LOG_LEVEL=debug npx -y @1mcp/agent --config dev.json
+
+# Multiple environment configs
+npx -y @1mcp/agent --config dev.json --port 3051
+npx -y @1mcp/agent --config staging.json --port 3052
+```
+
+**⏱️ Setup Time**: Built-in development features
+**🎯 Perfect For**: Development workflows, testing, debugging integration issues
+**✅ You Get**: Hot-reload configs, MCP Inspector integration, structured logging, multi-environment support
+
+---
+
+## 🚀 Feature Matrix by User Type
+
+| Feature               | End User       | Developer       | Admin         | DevOps         | Enterprise      |
+| --------------------- | -------------- | --------------- | ------------- | -------------- | --------------- |
+| **MCP Aggregation**   | ✅ Essential   | ✅ Essential    | ✅ Essential  | ✅ Essential   | ✅ Essential    |
+| **Hot Reload**        | 🔄 Automatic   | 🔧 Debug Tool   | ⚡ Critical   | ⚡ Critical    | ⚡ Critical     |
+| **Health Monitoring** | 👁️ Basic       | 🔧 Debug Data   | 📊 API Access | 📊 Logging     | 📊 Custom       |
+| **OAuth 2.1**         | 🔒 Transparent | 🔌 Integration  | 🛡️ Required   | 🛡️ Required    | 🛡️ Custom       |
+| **Tag-Based Access**  | 🚫 Hidden      | 🔧 Configurable | ✅ Management | ✅ Policies    | ✅ Custom       |
+| **Rate Limiting**     | 🚫 Transparent | 🔧 Configurable | 🛡️ Protection | 📊 Monitoring  | 📊 Custom       |
+| **Request Handling**  | ⚡ Automatic   | ⚡ Reliable     | ⚡ Stable     | ⚡ Monitored   | ⚡ Scalable     |
+| **Single-Instance**   | ✅ Simple      | ✅ Easy Deploy  | ✅ Manageable | ✅ Reliable    | 🔧 Custom Setup |
+| **Basic Logging**     | 🚫 Hidden      | 🔍 Debug        | 📋 Monitoring | 📋 Analysis    | 📋 Custom       |
+| **HTTP Transport**    | ⚡ Automatic   | 🔌 API Feature  | 📊 Monitoring | 📊 Integration | 📊 Custom       |
+
+**Legend**:
+
+- ✅ Primary benefit
+- ⚡ Performance feature
+- 🔒 Security feature
+- 🔧 Technical capability
+- 🛡️ Protection feature
+- 📊 Monitoring/analytics
+- 🚫 Not relevant for user type
+
+---
+
+## 🎯 Getting Started with Features
+
+### **Quick Start Path**
+
+1. **[5 minutes]** Basic MCP aggregation → [Level 1 Setup](/guide/getting-started#🌟-level-1-basic-proxy-5-minutes)
+2. **[15 minutes]** Add authentication → [Level 2 Setup](/guide/getting-started#🔒-level-2-secure-access-15-minutes)
+3. **[45 minutes]** Production features → [Level 3 Setup](/guide/getting-started#🏗️-level-3-production-ready-15-minutes)
+
+### **Feature-Specific Guides**
+
+- **Security Setup** → [Security Documentation](/reference/security)
+- **Configuration Guide** → [Configuration Reference](/guide/configuration)
+- **Authentication Guide** → [Authentication Setup](/guide/authentication)
+- **Architecture Overview** → [System Architecture](/reference/architecture)
+
+### **Real-World Examples**
+
+- **Comparison Guide** → [Feature Comparison](/reference/feature-comparison)
+
+---
+
+> **💡 Pro Tip**: Start with the features you need most, then add advanced capabilities as your requirements grow. Every feature is designed to work independently and can be enabled incrementally without breaking existing functionality.
 
 
 === ./../mcps/agent/test/e2e/README.md ===

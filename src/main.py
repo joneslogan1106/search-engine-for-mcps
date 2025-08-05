@@ -116,9 +116,12 @@ class TFIDF():
     def idf(self, word, bloblist):
         return math.log(len(bloblist) / (1 + self.n_containing(word, bloblist)))
 
-    def tfidf(self, word, blob, bloblist):
-        if word == "And" or word == "and" or word == "Of" or word == "of" or word == "For" or word == "FOR" or word == "for" or word == "AND" or word == "Not" or word == "NOT" or word == "not" or word == "nor" or word == "NOR" or word == "but" or word == "BUT" or word == "But" or word == "or" or word == "OR" or word == "Or" or word == "THE" or word == "The" or word == "the" or word == "to" or word == "To" or word == "TO" or word == "IN" or word == "in" or word == "In" or word == "Is" or word == "IS" or word == "is":
-            return 0
+    def tfidf(self, word: str, blob, bloblist):
+        
+        conjunctions = ["and", "or", "for", "not", "is", "if", "but", "to", "in", "of"]
+        for i in conjunctions:
+            if word.lower() == i:
+                return -1 + (self.tf(word, blob) * self.idf(word, bloblist)) # Keeps the data of the conjunctions, but gives them a negative score so they don't show up in the results.
         return self.tf(word, blob) * self.idf(word, bloblist)
     
 
