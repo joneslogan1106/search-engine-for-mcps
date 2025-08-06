@@ -59,7 +59,7 @@
             const query = document.querySelector('.search-input').value;
             if (query) {
                 // Here you would typically send the query to your backend for processing
-                alert('Searching for: ' + query);
+                window.location.href = `/search?q=${encodeURIComponent(query)}`;
             } else {
                 alert('Please enter a search term.');
             }

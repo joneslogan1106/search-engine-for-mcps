@@ -1,6 +1,7 @@
 # search-engine-for-mcps
 This repo will kinda be like a google for finding Open-MCP servers, which have tools for different LLM(s) which can make them interactive.
 It will be a search engine for Open-MCP servers, allowing users to find and interact with various tools and applications built on the MCP framework.
+NOTE: The flask app must be ran from the project root, In the backend, You can cache everything, but searching from the command line will not work, because it is implemented for the flask app.
 ## Features
 - Search for Open-MCP servers by name, description, or tags.
 - View details about each server, including available tools and applications.

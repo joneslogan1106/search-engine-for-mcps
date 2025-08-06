@@ -6,6 +6,29 @@ import re
 
 def get_current_mcps(showFullRelativePath=True):
     mcps = []
+    directory_path = "./mcps/"
+    try:
+        # Get a list of all entries (files and directories) in the specified path
+        all_entries = os.listdir(directory_path)
+
+        # To list only directories, you can filter using os.path.isdir()
+        if showFullRelativePath == True:
+            directories_only = [os.path.join(directory_path, entry) for entry in all_entries if os.path.isdir(os.path.join(directory_path, entry))]
+            mcps = directories_only
+            print(mcps)
+            return mcps
+        elif showFullRelativePath == False:
+            directories_only = [os.path.join(entry) for entry in all_entries if os.path.isdir(os.path.join(directory_path, entry))]
+            mcps = directories_only
+            print(mcps)
+            return mcps
+
+    except FileNotFoundError:
+        print(f"Error: Directory not found at '{directory_path}'")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+def get_current_mcps_cache_version(showFullRelativePath=True):
+    mcps = []
     directory_path = "./../../mcps/"
     try:
         # Get a list of all entries (files and directories) in the specified path
@@ -15,10 +38,12 @@ def get_current_mcps(showFullRelativePath=True):
         if showFullRelativePath == True:
             directories_only = [os.path.join(directory_path, entry) for entry in all_entries if os.path.isdir(os.path.join(directory_path, entry))]
             mcps = directories_only
+            print(mcps)
             return mcps
         elif showFullRelativePath == False:
             directories_only = [os.path.join(entry) for entry in all_entries if os.path.isdir(os.path.join(directory_path, entry))]
             mcps = directories_only
+            print(mcps)
             return mcps
 
     except FileNotFoundError:
@@ -65,7 +90,7 @@ class DocumentAggregator:
         self.output_dir = output_dir
         os.makedirs(self.output_dir, exist_ok=True)
         
-        for dir_path in get_current_mcps():
+        for dir_path in get_current_mcps_cache_version():
             print(dir_path)
             self.aggregate_documents(dir_path)
     
@@ -132,9 +157,9 @@ class TFIDF():
             sorted_words = sorted(scores.items(), key=lambda x: x[1], reverse=True)
             #for word, score in sorted_words[:10]:
             #    print("\tWord: {}, TF-IDF: {}".format(word, round(score, 5)))
-            with open(f"tfidf/{get_current_mcps(False)[i]}.txt", "w") as file:
+            with open(f"./tfidf/{get_current_mcps_cache_version(False)[i]}.txt", "w") as file:
                 pass # No content written
-            with open(f"tfidf/{get_current_mcps(False)[i]}.txt", "w") as f:
+            with open(f"./tfidf/{get_current_mcps_cache_version(False)[i]}.txt", "w") as f:
                 f.write(str(sorted_words))
             f.close()
 
@@ -148,7 +173,7 @@ class Search():
         sorted_words_per_mcp = []
         results = []
         for i in current_mcps:
-            with open(f"./tfidf/{i}.txt") as f:
+            with open(f"./src/backend/tfidf/{i}.txt") as f:
                 lines = f.readlines()
                 for line in lines:
                     sorted_words_per_mcp.append([i, line.strip()])  # keep `i` directly
@@ -175,13 +200,16 @@ class Search():
             for i in converted_data[x]['data']:
                 if re.search(self.query, i[0]): # xizhibei
                     results.append((converted_data[x]['mcp'], i[0], i[1]))
-        for y in range(len(results)):
-            if results[y][1].lower() == results[y-1][1].lower(): # prevents same thing with different letter casing only if they have the same TFIDF score
-                if results[y][2] == results[y-1][2]:
-                    continue
-            print(f"{results[y][0]}|{results[y][1]}|{results[y][2]}")
-        sorted_results = sorted(results, key=lambda x: x[2], reverse=True)
-        print(sorted_results)
+        # Remove duplicates: only keep unique (word, score) pairs (case-insensitive)
+        seen = set()
+        unique_results = []
+        for mcp, word, score in results:
+            key = (word.lower(), score)
+            if key not in seen:
+                seen.add(key)
+                unique_results.append((mcp, word, score))
+        sorted_results = sorted(unique_results, key=lambda x: x[2], reverse=True)
+        return sorted_results  # Return the sorted results for further processing or display
 if __name__ == "__main__":
     while True:
         user_input = input("> ")
@@ -190,13 +218,15 @@ if __name__ == "__main__":
             print(" search   - tests stuff")
             print(" exit     - Exits the program")
         elif user_input == "cache":
-            tf = TFIDF([get_current_mcps()])
+            tf = TFIDF([get_current_mcps_cache_version()])
             tf.run()
         elif user_input == "search":
             print("This option assumes you already ran the cache command")
             query = input("Query: ")
             search = Search(query)
-            search.search()
+            results = search.search()
+            for mcp, word, score in results:
+                print(f"{mcp}|{word}|{score}")
         elif user_input == "exit":
             break
         else:

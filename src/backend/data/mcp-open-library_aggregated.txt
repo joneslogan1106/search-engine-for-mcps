@@ -1,5 +1,5 @@
 
-=== ./../mcps/mcp-open-library/.eslintrc.json ===
+=== ./../../mcps/mcp-open-library/.eslintrc.json ===
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
@@ -25,7 +25,7 @@
 }
 
 
-=== ./../mcps/mcp-open-library/tsconfig.json ===
+=== ./../../mcps/mcp-open-library/tsconfig.json ===
 {
   "compilerOptions": {
     "target": "ES2022",
@@ -43,7 +43,7 @@
 }
 
 
-=== ./../mcps/mcp-open-library/package.json ===
+=== ./../../mcps/mcp-open-library/package.json ===
 {
   "name": "mcp-open-library",
   "version": "0.1.0",
@@ -97,11 +97,11 @@
 }
 
 
-=== ./../mcps/mcp-open-library/.prettierrc.json ===
+=== ./../../mcps/mcp-open-library/.prettierrc.json ===
 {}
 
 
-=== ./../mcps/mcp-open-library/README.md ===
+=== ./../../mcps/mcp-open-library/README.md ===
 # MCP Open Library
 
 [![smithery badge](https://smithery.ai/badge/@8enSmith/mcp-open-library)](https://smithery.ai/server/@8enSmith/mcp-open-library)
@@ -375,7 +375,7 @@ Contributions are welcome! Please feel free to submit a pull request.
 - [Model Context Protocol](https://github.com/modelcontextprotocol/mcp)
 
 
-=== ./../mcps/mcp-open-library/LICENSE.md ===
+=== ./../../mcps/mcp-open-library/LICENSE.md ===
 MIT License
 
 Copyright (c) 2025 Ben Smith
@@ -398,7 +398,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-=== ./../mcps/mcp-open-library/package-lock.json ===
+=== ./../../mcps/mcp-open-library/package-lock.json ===
 {
   "name": "mcp-open-library",
   "version": "0.1.0",
@@ -5607,7 +5607,7 @@ SOFTWARE.
 }
 
 
-=== ./../mcps/mcp-open-library/.cz.json ===
+=== ./../../mcps/mcp-open-library/.cz.json ===
 {
   "commitizen": {
     "name": "cz_conventional_commits",
