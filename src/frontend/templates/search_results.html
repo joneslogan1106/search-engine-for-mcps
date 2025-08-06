@@ -1,0 +1,95 @@
+<!-- Search Results Page for MCPs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - MCPs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+        .hero {
+            background-color: #4a90e2;
+            color: white;
+        }
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .search-button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .search-button:hover {
+            background-color: #357ABD;
+        }
+        .results-list {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            padding: 2rem;
+        }
+        .result-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .result-title {
+            font-size: 1.25rem;
+            color: #357ABD;
+            margin-bottom: 0.25rem;
+        }
+        .result-desc {
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Search Engine for MCPs</h1>
+                <h2 class="subtitle">Search Results</h2>
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search for MCPs..." value="{{ query }}">
+                <button class="search-button" onclick="window.location.href='/?q='+document.querySelector('.search-input').value">Search</button>
+            </div>
+            <div class="results-list">
+                {% if results %}
+                    {% for result in results %}
+                        <div class="result-item">
+                            <div class="result-title">
+                                <a href="{{ result.url }}" target="_blank">{{ result.title }}</a>
+                            </div>
+                            <div class="result-desc">{{ result.description }}</div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No results found for <strong>{{ query }}</strong>.</p>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+</body>
+</html>

@@ -6,7 +6,7 @@ import re
 
 def get_current_mcps(showFullRelativePath=True):
     mcps = []
-    directory_path = "./../mcps/"
+    directory_path = "./../../mcps/"
     try:
         # Get a list of all entries (files and directories) in the specified path
         all_entries = os.listdir(directory_path)
@@ -180,6 +180,8 @@ class Search():
                 if results[y][2] == results[y-1][2]:
                     continue
             print(f"{results[y][0]}|{results[y][1]}|{results[y][2]}")
+        sorted_results = sorted(results, key=lambda x: x[2], reverse=True)
+        print(sorted_results)
 if __name__ == "__main__":
     while True:
         user_input = input("> ")
